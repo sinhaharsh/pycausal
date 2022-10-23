@@ -21,7 +21,7 @@ def generate_col_names(d):
     return col_names
 
 
-def load_dgp_scenario(scenario, d):
+def load_scenario(scenario, d):
     """Utility function to load predefined scenarios"""
     confounder_indexes = [1, 2]
     predictor_indexes = [3, 4]
