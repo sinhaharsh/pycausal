@@ -1,8 +1,9 @@
+from math import log
+
 import numpy as np
 import pandas as pd
-from sklearn.linear_model import LogisticRegression, LinearRegression
-from math import log
 from causallib.estimation import IPW
+from sklearn.linear_model import LogisticRegression, LinearRegression
 
 
 def check_input(A, Y, X):
@@ -23,7 +24,8 @@ def check_input(A, Y, X):
 
 
 def calc_ate_vanilla_ipw(A, Y, X):
-    ipw = IPW(LogisticRegression(solver='liblinear', penalty='l1', C=1e2, max_iter=500), use_stabilized=True).fit(X, A)
+    ipw = IPW(LogisticRegression(solver='liblinear', penalty='l1', C=1e2,
+                                 max_iter=500), use_stabilized=True).fit(X, A)
     weights = ipw.compute_weights(X, A)
     outcomes = ipw.estimate_population_outcome(X, A, Y, w=weights)
     effect = ipw.estimate_effect(outcomes[1], outcomes[0])
@@ -33,16 +35,19 @@ def calc_ate_vanilla_ipw(A, Y, X):
 def calc_group_diff(X, idx_trt, ipw, l_norm):
     """Utility function to calculate the difference in covariates between treatment and control groups"""
     return (np.abs(np.average(X[idx_trt], weights=ipw[idx_trt], axis=0) -
-                   np.average(X[~idx_trt], weights=ipw[~idx_trt], axis=0)))**l_norm
+                   np.average(X[~idx_trt], weights=ipw[~idx_trt],
+                              axis=0))) ** l_norm
 
 
 def calc_wamd(A, X, ipw, x_coefs, l_norm=1):
     """Utility function to calculate the weighted absolute mean difference"""
     idx_trt = A == 1
-    return calc_group_diff(X.values, idx_trt.values, ipw.values, l_norm).dot(np.abs(x_coefs))
+    return calc_group_diff(X.values, idx_trt.values, ipw.values, l_norm).dot(
+        np.abs(x_coefs))
 
 
-def calc_outcome_adaptive_lasso_single_lambda(A, Y, X, Lambda, gamma_convergence_factor):
+def calc_outcome_adaptive_lasso_single_lambda(A, Y, X, Lambda,
+                                              gamma_convergence_factor):
     """Calculate ATE with the outcome adaptive lasso"""
     n = A.shape[0]  # number of samples
     # extract gamma according to Lambda and gamma_convergence_factor
@@ -57,7 +62,9 @@ def calc_outcome_adaptive_lasso_single_lambda(A, Y, X, Lambda, gamma_convergence
     # apply the penalization to the covariates themselves
     X_w = X / weights
     # fit logistic propensity score model from penalized covariates to the exposure
-    ipw = IPW(LogisticRegression(solver='liblinear', penalty='l1', C=1/Lambda), use_stabilized=False).fit(X_w, A)
+    ipw = IPW(
+        LogisticRegression(solver='liblinear', penalty='l1', C=1 / Lambda),
+        use_stabilized=False).fit(X_w, A)
     # compute inverse propensity weighting and calculate ATE
     weights = ipw.compute_weights(X_w, A)
     outcomes = ipw.estimate_population_outcome(X_w, A, Y, w=weights)
@@ -65,7 +72,8 @@ def calc_outcome_adaptive_lasso_single_lambda(A, Y, X, Lambda, gamma_convergence
     return effect, x_coefs, weights
 
 
-def calc_outcome_adaptive_lasso(A, Y, X, gamma_convergence_factor=2, log_lambdas=None):
+def calc_outcome_adaptive_lasso(A, Y, X, gamma_convergence_factor=2,
+                                log_lambdas=None):
     """Calculate estimate of average treatment effect using the outcome adaptive LASSO (Shortreed and Ertefaie, 2017)
     Parameters
     ----------
@@ -97,7 +105,8 @@ def calc_outcome_adaptive_lasso(A, Y, X, gamma_convergence_factor=2, log_lambdas
     # Calculate ATE for each lambda, select the one minimizing the weighted absolute mean difference
     for il in range(len(lambdas)):
         ate_vec[il], x_coefs, ipw = \
-            calc_outcome_adaptive_lasso_single_lambda(A, Y, X, lambdas[il], gamma_convergence_factor)
+            calc_outcome_adaptive_lasso_single_lambda(A, Y, X, lambdas[il],
+                                                      gamma_convergence_factor)
         amd_vec[il] = calc_wamd(A, X, ipw, x_coefs)
 
     return ate_vec[np.argmin(amd_vec)]
