@@ -74,20 +74,30 @@ def calc_outcome_adaptive_lasso_single_lambda(A, Y, X, Lambda,
 
 def calc_outcome_adaptive_lasso(A, Y, X, gamma_convergence_factor=2,
                                 log_lambdas=None):
-    """Calculate estimate of average treatment effect using the outcome adaptive LASSO (Shortreed and Ertefaie, 2017)
+    """
+    Calculate estimate of average treatment effect using the outcome adaptive
+     LASSO (Shortreed and Ertefaie, 2017)
+
     Parameters
     ----------
-    A : Exposure (=treatment, intervention) - pandas series or one-dimensional numpy array
-    Y : Outcome - pandas series or one-dimensional numpy array
-    X : Covariates - pandas dataframe or two-dimensional numpy array (shape n_samples, n_covariates)
+    A : Exposure (=treatment, intervention)
+     pandas series or one-dimensional numpy array
+    Y : Outcome
+     pandas series or one-dimensional numpy array
+    X : Covariates
+     pandas dataframe or two-dimensional numpy array
+     (shape n_samples, n_covariates)
     log_lambdas : log of lambda - strength of adaptive LASSO regularization.
-        If log_lambdas has multiple values, lambda will be selected according to the minimal absolute mean difference,
-        as suggested in the paper
-        If None, it will be set to the suggested search list in the paper:
-        [-10, -5, -2, -1, -0.75, -0.5, -0.25, 0.25, 0.49]
-    gamma_convergence_factor : a constant to couple between lambda and gamma, the single-feature penalization strength
-        The equation relating gamma and lambda is lambda * n^(gamma/2 -1) = n^gamma_convergence_factor
-        Default value is 2, as suggested in the paper for the synthetic dataset experiments
+     If log_lambdas has multiple values, lambda will be selected according to
+     the minimal absolute mean difference, as suggested in the paper
+     If None, it will be set to the suggested search list in the paper:
+     [-10, -5, -2, -1, -0.75, -0.5, -0.25, 0.25, 0.49]
+    gamma_convergence_factor : a constant to couple between lambda and gamma,
+     the single-feature penalization strength. The equation relating gamma and
+     lambda is lambda * n^(gamma/2 -1) = n^gamma_convergence_factor
+     Default value is 2, as suggested in the paper for the synthetic
+     dataset experiments
+
     Returns
     -------
     ate : estimate of the average treatment effect
