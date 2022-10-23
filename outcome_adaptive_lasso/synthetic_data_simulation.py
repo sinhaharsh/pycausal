@@ -6,7 +6,8 @@ from sklearn.preprocessing import StandardScaler
 
 def generate_col_names(d):
     """Utility function to generate column names for the synthetic dataset """
-    assert (d >= 6)
+    if d < 6:
+        raise SyntaxError('the model should include d-6 spurious variables')
     pC = 2  # number of confounders
     pP = 2  # number of outcome predictors
     pI = 2  # number of exposure predictors
