@@ -33,7 +33,10 @@ def calc_ate_vanilla_ipw(A, Y, X):
 
 
 def calc_group_diff(X, idx_trt, ipw, l_norm):
-    """Utility function to calculate the difference in covariates between treatment and control groups"""
+    """
+    Utility function to calculate the difference in covariates between
+    treatment and control groups
+    """
     return (np.abs(np.average(X[idx_trt], weights=ipw[idx_trt], axis=0) -
                    np.average(X[~idx_trt], weights=ipw[~idx_trt],
                               axis=0))) ** l_norm
@@ -55,13 +58,18 @@ def calc_outcome_adaptive_lasso_single_lambda(A, Y, X, Lambda,
     # fit regression from covariates X and exposure A to outcome Y
     XA = X.merge(A.to_frame(), left_index=True, right_index=True)
     lr = LinearRegression(fit_intercept=True).fit(XA, Y)
+
     # extract the coefficients of the covariates
     x_coefs = lr.coef_.flatten()[1:]
+
     # calculate outcome adaptive penalization weights
     weights = (np.abs(x_coefs)) ** (-1 * gamma)
+
     # apply the penalization to the covariates themselves
     X_w = X / weights
-    # fit logistic propensity score model from penalized covariates to the exposure
+
+    # fit logistic propensity score model from penalized covariates
+    # to the exposure
     ipw = IPW(
         LogisticRegression(solver='liblinear', penalty='l1', C=1 / Lambda),
         use_stabilized=False).fit(X_w, A)
@@ -112,7 +120,8 @@ def calc_outcome_adaptive_lasso(A, Y, X, gamma_convergence_factor=2,
     amd_vec = np.zeros(lambdas.shape[0])
     ate_vec = np.zeros(lambdas.shape[0])
 
-    # Calculate ATE for each lambda, select the one minimizing the weighted absolute mean difference
+    # Calculate ATE for each lambda,
+    # select the one minimizing the weighted absolute mean difference
     for il in range(len(lambdas)):
         ate_vec[il], x_coefs, ipw = \
             calc_outcome_adaptive_lasso_single_lambda(A, Y, X, lambdas[il],
