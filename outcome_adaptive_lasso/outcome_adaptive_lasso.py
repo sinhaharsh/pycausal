@@ -51,8 +51,7 @@ def calc_wamd(A, X, ipw, x_coefs, l_norm=1):
         np.abs(x_coefs))
 
 
-def calc_oal_single_lambda(A, Y, X, _lambda,
-                           gamma_factor):
+def calc_oal_single_lambda(A, Y, X, _lambda, gamma_factor):
     """Calculate ATE with the outcome adaptive lasso"""
     n = A.shape[0]  # number of samples
 
@@ -67,7 +66,7 @@ def calc_oal_single_lambda(A, Y, X, _lambda,
     x_coefs = lr.coef_.flatten()[1:]
 
     # calculate outcome adaptive penalization weights
-    weights = (np.abs(x_coefs)) ** (-1 * gamma)
+    weights = (np.abs(x_coefs)) ** (-gamma)
 
     # apply the penalization to the covariates themselves
     X_w = X / weights
