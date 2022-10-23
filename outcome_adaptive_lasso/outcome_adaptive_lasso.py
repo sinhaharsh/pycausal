@@ -49,12 +49,14 @@ def calc_wamd(A, X, ipw, x_coefs, l_norm=1):
         np.abs(x_coefs))
 
 
-def calc_outcome_adaptive_lasso_single_lambda(A, Y, X, Lambda,
+def calc_outcome_adaptive_lasso_single_lambda(A, Y, X, _lambda,
                                               gamma_convergence_factor):
     """Calculate ATE with the outcome adaptive lasso"""
     n = A.shape[0]  # number of samples
-    # extract gamma according to Lambda and gamma_convergence_factor
-    gamma = 2 * (1 + gamma_convergence_factor - log(Lambda, n))
+
+    # extract gamma according to _lambda and gamma_convergence_factor
+    gamma = 2 * (1 + gamma_convergence_factor - log(_lambda, n))
+
     # fit regression from covariates X and exposure A to outcome Y
     XA = X.merge(A.to_frame(), left_index=True, right_index=True)
     lr = LinearRegression(fit_intercept=True).fit(XA, Y)
@@ -71,7 +73,7 @@ def calc_outcome_adaptive_lasso_single_lambda(A, Y, X, Lambda,
     # fit logistic propensity score model from penalized covariates
     # to the exposure
     ipw = IPW(
-        LogisticRegression(solver='liblinear', penalty='l1', C=1 / Lambda),
+        LogisticRegression(solver='liblinear', penalty='l1', C=1 / _lambda),
         use_stabilized=False).fit(X_w, A)
     # compute inverse propensity weighting and calculate ATE
     weights = ipw.compute_weights(X_w, A)
