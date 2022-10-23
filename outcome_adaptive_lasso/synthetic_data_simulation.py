@@ -103,7 +103,7 @@ def generate_synthetic_dataset(n=1000, d=100, rho=0, eta=0, scenario_num=1):
     scaler.fit_transform(X)
 
     # Load beta and nu from the predefined scenarios
-    beta, nu = load_dgp_scenario(scenario_num, d)
+    beta, nu = load_scenario(scenario_num, d)
     A = np.random.binomial(np.ones(n, dtype=int), expit(np.dot(X, nu)))
     Y = np.random.randn(n) + eta * A + np.dot(X, beta)
     col_names = generate_col_names(d)
