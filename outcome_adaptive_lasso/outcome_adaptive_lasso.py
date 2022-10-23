@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 from causallib.estimation import IPW
 from sklearn.linear_model import LogisticRegression, LinearRegression
+from synthetic_data_simulation import generate_synthetic_dataset
 
 
 def check_input(A, Y, X):
@@ -131,3 +132,10 @@ def calc_outcome_adaptive_lasso(A, Y, X, gamma_convergence_factor=2,
         amd_vec[il] = calc_wamd(A, X, ipw, x_coefs)
 
     return ate_vec[np.argmin(amd_vec)]
+
+
+if __name__ == '__main__':
+    df = generate_synthetic_dataset(n=200, d=100, rho=0, eta=0, scenario_num=4)
+    ate = calc_outcome_adaptive_lasso(A=df.pop('A'),
+                                      Y=df.pop('Y'),
+                                      X=df)
