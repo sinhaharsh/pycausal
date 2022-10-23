@@ -53,27 +53,42 @@ def load_dgp_scenario(scenario, d):
 
 
 def generate_synthetic_dataset(n=1000, d=100, rho=0, eta=0, scenario_num=1):
-    """Generate a simulated dataset according to the settings described in section 4.1 of the paper
-    Covariates X are zero mean unit variance Gaussians with correlation rho
-    Exposure A is logistic in X: logit(P(A=1)) = nu.T*X (nu is set according to scenario_num)
-    Outcome Y is linear in A and X: Y =  eta*A + beta.T*X + N(0,1)
+    """
+    Generate a simulated dataset according to the settings described in
+    section 4.1 of the paper. Covariates X are zero mean unit variance Gaussian
+    with correlation rho
+
+    Exposure A is logistic in X: logit(P(A=1)) = nu.T * X
+                                        (nu is set according to scenario_num)
+    Outcome Y is linear in A and X: Y =  eta * A + beta.T * X + N(0,1)
+
     Parameters
     ----------
     n : number of samples in the dataset
     d : total number of covariates. Of the d covariates, d-6 are spurious,
         i.e. they do not influence the exposure or the outcome
+        X1, X2 influence exposure and outcome;
+        X3, X4 influence the outcome only,
+        X5, X6 influence the treatment only.
+
     rho : correlation between pairwise Gaussian covariates
     eta : True treatment effect
-    scenario_num : one of {1-4}. Each scenario differs in the vectors nu and beta.
-        According to the supplementary material of the paper, the four scenarios are:
-        1) beta = [0.6, 0.6, 0.6, 0.6, 0, ..., 0] and nu = [1, 1, 0, 0, 1, 1, 0, ..., 0]
-        2) beta = [0.6, 0.6, 0.6, 0.6, 0, ..., 0] and nu = [0.4, 0.4, 0, 0, 1, 1, 0, ..., 0]
-        3) beta = [0.2, 0.2, 0.6, 0.6, 0, ..., 0] and nu = [0.4, 0.4, 0, 0, 1, 1, 0, ..., 0]
-        4) beta = [0.6, 0.6, 0.6, 0.6, 0, ..., 0] and nu = [1, 1, 0, 0, 1.8, 1.8, 0, ..., 0]
+    scenario_num : one of {1-4}. Each scenario differs in the vectors nu & beta.
+
+    According to the supplementary material of the paper, the four scenarios are
+        1) beta = [0.6, 0.6, 0.6, 0.6, 0, ..., 0]
+         and nu = [1, 1, 0, 0, 1, 1, 0, ..., 0]
+        2) beta = [0.6, 0.6, 0.6, 0.6, 0, ..., 0]
+         and nu = [0.4, 0.4, 0, 0, 1, 1, 0, ..., 0]
+        3) beta = [0.2, 0.2, 0.6, 0.6, 0, ..., 0]
+         and nu = [0.4, 0.4, 0, 0, 1, 1, 0, ..., 0]
+        4) beta = [0.6, 0.6, 0.6, 0.6, 0, ..., 0]
+         and nu = [1, 1, 0, 0, 1.8, 1.8, 0, ..., 0]
     Returns
     -------
     df : DataFrame of n rows and d+2 columns: A, Y and d covariates.
-         Covariates are named Xc if they are confounders, Xi if they are instrumental variables,
+         Covariates are named Xc if they are confounders,
+         Xi if they are instrumental variables,
          Xp if they are predictors of outcome and Xs if they are spurious
     TODO:
      * Enable manual selection of nu and beta
