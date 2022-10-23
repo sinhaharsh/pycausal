@@ -52,12 +52,12 @@ def calc_wamd(A, X, ipw, x_coefs, l_norm=1):
 
 
 def calc_oal_single_lambda(A, Y, X, _lambda,
-                           gamma_convergence_factor):
+                           gamma_factor):
     """Calculate ATE with the outcome adaptive lasso"""
     n = A.shape[0]  # number of samples
 
     # extract gamma according to _lambda and gamma_factor
-    gamma = 2 * (1 + gamma_convergence_factor - log(_lambda, n))
+    gamma = 2 * (1 + gamma_factor - log(_lambda, n))
 
     # fit regression from covariates X and exposure A to outcome Y
     XA = X.merge(A.to_frame(), left_index=True, right_index=True)
@@ -106,7 +106,7 @@ def calc_outcome_adaptive_lasso(A, Y, X, gamma_factor=2,
      [-10, -5, -2, -1, -0.75, -0.5, -0.25, 0.25, 0.49]
     gamma_factor : a constant to couple between lambda and gamma,
      the single-feature penalization strength. The equation relating gamma and
-     lambda is lambda * n^(gamma/2 -1) = n^gamma_convergence_factor
+     lambda is lambda * n^(gamma/2 -1) = n^gamma_factor
      Default value is 2, as suggested in the paper for the synthetic
      dataset experiments
 
