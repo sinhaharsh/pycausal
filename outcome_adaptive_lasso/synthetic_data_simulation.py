@@ -23,9 +23,9 @@ def generate_col_names(d):
 
 def load_scenario(scenario, d):
     """Utility function to load predefined scenarios"""
-    confounder_indexes = [1, 2]
-    predictor_indexes = [3, 4]
-    exposure_indexes = [5, 6]
+    confounder_indexes = [0, 1]
+    predictor_indexes = [2, 3]
+    exposure_indexes = [4, 5]
     nu = np.zeros(d)
     beta = np.zeros(d)
     if scenario == 1:
