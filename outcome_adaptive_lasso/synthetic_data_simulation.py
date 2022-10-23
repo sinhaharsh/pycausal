@@ -117,4 +117,4 @@ def generate_synthetic_dataset(n=1000, d=100, rho=0, eta=0, scenario_num=1):
 
 
 if __name__ == '__main__':
-    df = generate_synthetic_dataset(n=30, d=7, rho=0.0, eta=0, scenario_num=4)
+    df = generate_synthetic_dataset(n=200, d=7, rho=0.0, eta=0, scenario_num=4)
