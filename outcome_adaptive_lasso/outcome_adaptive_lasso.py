@@ -74,7 +74,10 @@ def calc_oal_single_lambda(A, Y, X, _lambda, gamma_factor):
     # fit logistic propensity score model from penalized covariates
     # to the exposure
     ipw = IPW(
-        LogisticRegression(solver='liblinear', penalty='l1', C=1 / _lambda),
+        LogisticRegression(solver='liblinear',
+                           penalty='l1',
+                           C=1 / _lambda,
+                           max_iter=4000),
         use_stabilized=False).fit(X_w, A)
     # compute inverse propensity weighting and calculate ATE
     weights = ipw.compute_weights(X_w, A)
