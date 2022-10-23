@@ -130,6 +130,7 @@ def calc_outcome_adaptive_lasso(A, Y, X, gamma_factor=2,
         ate_vec[il], x_coefs, ipw = calc_oal_single_lambda(A, Y, X,
                                                            lambdas[il],
                                                            gamma_factor)
+        # print("Coeff of first 8 covariates : {}".format(x_coefs[:8]))
         amd_vec[il] = calc_wamd(A, X, ipw, x_coefs)
 
     return ate_vec[np.argmin(amd_vec)]
