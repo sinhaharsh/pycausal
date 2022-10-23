@@ -137,6 +137,9 @@ def calc_outcome_adaptive_lasso(A, Y, X, gamma_factor=2,
 
 if __name__ == '__main__':
     df = generate_synthetic_dataset(n=200, d=100, rho=0, eta=0, scenario_num=4)
-    ate = calc_outcome_adaptive_lasso(A=df.pop('A'),
-                                      Y=df.pop('Y'),
-                                      X=df)
+    A = df.pop('A')
+    Y = df.pop('Y')
+    X = df
+    ate = calc_outcome_adaptive_lasso(A, Y, X)
+    ate_vanilla = calc_ate_vanilla_ipw(A, Y, X)
+    print("OAL Estimate : {}\t IPW Estimate : {}".format(ate, ate_vanilla))
