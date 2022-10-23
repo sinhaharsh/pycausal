@@ -10,11 +10,11 @@ def make_colnames(count, subscript):
 
 def generate_col_names(d):
     """Utility function to generate column names for the synthetic dataset """
+    pC = 2  # number of confounders
+    pP = 2  # number of outcome predictors / Precision variables
+    pI = 2  # number of exposure predictors / Instrumental variables
     if d < 6:
         raise SyntaxError('the model should include d-6 spurious variables')
-    pC = 2  # number of confounders
-    pP = 2  # number of outcome predictors
-    pI = 2  # number of exposure predictors
     pS = d - (pC + pI + pP)  # number of spurious covariates
     col_names = ['A', 'Y'] + make_colnames(pC, 'c') + make_colnames(pP, 'p') \
         + make_colnames(pI, 'i') + make_colnames(pS, 's')
