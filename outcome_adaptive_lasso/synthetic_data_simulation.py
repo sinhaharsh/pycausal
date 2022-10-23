@@ -4,6 +4,10 @@ from scipy.special import expit
 from sklearn.preprocessing import StandardScaler
 
 
+def make_colnames(count, subscript):
+    return ['X{1}{0}'.format(i, subscript) for i in range(1, count + 1)]
+
+
 def generate_col_names(d):
     """Utility function to generate column names for the synthetic dataset """
     if d < 6:
@@ -12,8 +16,8 @@ def generate_col_names(d):
     pP = 2  # number of outcome predictors
     pI = 2  # number of exposure predictors
     pS = d - (pC + pI + pP)  # number of spurious covariates
-    col_names = ['A', 'Y'] + [f'Xc{i}' for i in range(1, pC + 1)] + [f'Xp{i}' for i in range(1, pP + 1)] + \
-                [f'Xi{i}' for i in range(1, pI + 1)] + [f'Xs{i}' for i in range(1, pS + 1)]
+    col_names = ['A', 'Y'] + make_colnames(pC, 'c') + make_colnames(pP, 'p') \
+        + make_colnames(pI, 'i') + make_colnames(pS, 's')
     return col_names
 
 
