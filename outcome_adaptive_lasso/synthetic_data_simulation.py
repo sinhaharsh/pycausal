@@ -94,9 +94,12 @@ def generate_synthetic_dataset(n=1000, d=100, rho=0, eta=0, scenario_num=1):
     TODO:
      * Enable manual selection of nu and beta
     """
-    cov_x = np.eye(d) + ~np.eye(d,
-                                dtype=bool) * rho  # covariance matrix of the Gaussian covariates.
-    # Variance of each covariate is 1, correlation coefficient of every pair is rho
+
+    # covariance matrix of the Gaussian covariates.
+    cov_x = np.eye(d) + ~np.eye(d, dtype=bool) * rho
+
+    # Variance of each covariate is 1,
+    # correlation coefficient of every pair is rho
     X = np.random.multivariate_normal(mean=0 * np.ones(d), cov=cov_x,
                                       size=n)  # shape (n,d)
     # Normalize covariates to have 0 mean unit std
