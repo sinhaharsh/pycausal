@@ -110,3 +110,7 @@ def generate_synthetic_dataset(n=1000, d=100, rho=0, eta=0, scenario_num=1):
     df = pd.DataFrame(np.hstack([A.reshape(-1, 1), Y.reshape(-1, 1), X]),
                       columns=col_names)
     return df
+
+
+if __name__ == '__main__':
+    df = generate_synthetic_dataset(n=30, d=7, rho=0.0, eta=0, scenario_num=4)
