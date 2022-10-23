@@ -20,7 +20,8 @@ def check_input(A, Y, X):
         X = pd.DataFrame(X)
     if not len(A.index) == len(Y.index) == len(X.index):
         raise Exception(f'A, Y, X must have same number of samples, '
-                        f'got A: {len(A.index)} samples, Y: {len(Y.index)} samples, X: {len(X.index)} samples')
+                        f'got A: {len(A.index)} samples, '
+                        f'Y: {len(Y.index)} samples, X: {len(X.index)} samples')
     return A, Y, X
 
 
