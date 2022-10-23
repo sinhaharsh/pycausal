@@ -50,12 +50,12 @@ def calc_wamd(A, X, ipw, x_coefs, l_norm=1):
         np.abs(x_coefs))
 
 
-def calc_outcome_adaptive_lasso_single_lambda(A, Y, X, _lambda,
-                                              gamma_convergence_factor):
+def calc_oal_single_lambda(A, Y, X, _lambda,
+                           gamma_convergence_factor):
     """Calculate ATE with the outcome adaptive lasso"""
     n = A.shape[0]  # number of samples
 
-    # extract gamma according to _lambda and gamma_convergence_factor
+    # extract gamma according to _lambda and gamma_factor
     gamma = 2 * (1 + gamma_convergence_factor - log(_lambda, n))
 
     # fit regression from covariates X and exposure A to outcome Y
@@ -83,7 +83,7 @@ def calc_outcome_adaptive_lasso_single_lambda(A, Y, X, _lambda,
     return effect, x_coefs, weights
 
 
-def calc_outcome_adaptive_lasso(A, Y, X, gamma_convergence_factor=2,
+def calc_outcome_adaptive_lasso(A, Y, X, gamma_factor=2,
                                 log_lambdas=None):
     """
     Calculate estimate of average treatment effect using the outcome adaptive
@@ -103,7 +103,7 @@ def calc_outcome_adaptive_lasso(A, Y, X, gamma_convergence_factor=2,
      the minimal absolute mean difference, as suggested in the paper
      If None, it will be set to the suggested search list in the paper:
      [-10, -5, -2, -1, -0.75, -0.5, -0.25, 0.25, 0.49]
-    gamma_convergence_factor : a constant to couple between lambda and gamma,
+    gamma_factor : a constant to couple between lambda and gamma,
      the single-feature penalization strength. The equation relating gamma and
      lambda is lambda * n^(gamma/2 -1) = n^gamma_convergence_factor
      Default value is 2, as suggested in the paper for the synthetic
@@ -126,9 +126,9 @@ def calc_outcome_adaptive_lasso(A, Y, X, gamma_convergence_factor=2,
     # Calculate ATE for each lambda,
     # select the one minimizing the weighted absolute mean difference
     for il in range(len(lambdas)):
-        ate_vec[il], x_coefs, ipw = \
-            calc_outcome_adaptive_lasso_single_lambda(A, Y, X, lambdas[il],
-                                                      gamma_convergence_factor)
+        ate_vec[il], x_coefs, ipw = calc_oal_single_lambda(A, Y, X,
+                                                           lambdas[il],
+                                                           gamma_factor)
         amd_vec[il] = calc_wamd(A, X, ipw, x_coefs)
 
     return ate_vec[np.argmin(amd_vec)]
