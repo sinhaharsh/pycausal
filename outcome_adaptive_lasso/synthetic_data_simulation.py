@@ -43,12 +43,13 @@ def load_scenario(scenario, d):
         beta[predictor_indexes] = 0.6
         nu[confounder_indexes] = 0.4
         nu[exposure_indexes] = 1
-    else:
-        assert (scenario == 4)
+    elif scenario == 4:
         beta[confounder_indexes] = 0.6
         beta[predictor_indexes] = 0.6
         nu[confounder_indexes] = 1
         nu[exposure_indexes] = 1.8
+    else:
+        raise NotImplementedError("Choose scenario in [1,4]".format(scenario))
     return beta, nu
 
 
