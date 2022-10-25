@@ -21,12 +21,20 @@ def get_psd_matrix(size, diagonal=1):
     # https://www.maths.manchester.ac.uk/~higham/narep/narep369.pdf
     # https://stackoverflow.com/a/10940283/3140172
     while True:
-        A = np.random.rand(size, size)
+        A = 0.1*np.random.rand(size, size)
         B = np.dot(A, A.transpose())
         np.fill_diagonal(B, diagonal)
         C = near_pd(B, nit=100)
         if np.all(np.linalg.eigvals(C) > 0):
             return C
+        else:
+            # It is possible that eigvalues are -0.000 due to floating
+            # point error. Need to correct for it.
+            min_eigvalue = min(np.linalg.eigvals(C))
+            C -= 10*min_eigvalue*np.eye(*C.shape)
+            if np.all(np.linalg.eigvals(C) > 0):
+                return C
+        warnings.warn("regenerating random correlation matrix")
 
 
 def _get_a_plus(matrix):
