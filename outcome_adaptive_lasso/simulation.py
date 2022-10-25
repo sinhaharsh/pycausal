@@ -56,8 +56,8 @@ class SimulateDataset:
         """Utility function to load predefined scenarios"""
         c_indexes = list(range(self.num_c))
         p_indexes = list(range(self.num_c,
-                               self.num_p+self.num_c))
-        i_indexes = list(range(self.num_p,
+                               self.num_c+self.num_p))
+        i_indexes = list(range(self.num_p+self.num_c,
                                self.num_p+self.num_c+self.num_i))
         nu = np.zeros(self.num_covariates)
         beta = np.zeros(self.num_covariates)
