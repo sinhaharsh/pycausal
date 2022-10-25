@@ -1,5 +1,6 @@
-import numpy as np
+import warnings
 
+import numpy as np
 
 def print_corr(df):
     A = df.pop('A')
