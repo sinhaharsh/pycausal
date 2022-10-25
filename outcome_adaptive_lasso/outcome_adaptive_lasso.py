@@ -4,7 +4,6 @@ import numpy as np
 import pandas as pd
 from causallib.estimation import IPW
 from sklearn.linear_model import LogisticRegression, LinearRegression
-from synthetic_data_simulation import generate_synthetic_dataset
 
 
 def check_input(A, Y, X):
@@ -63,7 +62,7 @@ def calc_oal_single_lambda(A, Y, X, _lambda, gamma_factor):
     lr = LinearRegression(fit_intercept=True).fit(XA, Y)
 
     # extract the coefficients of the covariates
-    x_coefs = lr.coef_.flatten()[1:]
+    x_coefs = lr.coef_.flatten()[:-1]
 
     # calculate outcome adaptive penalization weights
     weights = (np.abs(x_coefs)) ** (-gamma)
@@ -77,7 +76,7 @@ def calc_oal_single_lambda(A, Y, X, _lambda, gamma_factor):
         LogisticRegression(solver='liblinear',
                            penalty='l1',
                            C=1 / _lambda,
-                           max_iter=4000),
+                           max_iter=400),
         use_stabilized=False).fit(X_w, A)
     # compute inverse propensity weighting and calculate ATE
     weights = ipw.compute_weights(X_w, A)
@@ -139,6 +138,8 @@ def calc_outcome_adaptive_lasso(A, Y, X, gamma_factor=2,
 
 
 if __name__ == '__main__':
+    from synthetic_data_simulation import generate_synthetic_dataset
+
     for eta in range(0, 20, 2):
         print(f"True Estimate : {eta}")
         df = generate_synthetic_dataset(n=200, d=100, rho=0, eta=eta, scenario_num=4)
