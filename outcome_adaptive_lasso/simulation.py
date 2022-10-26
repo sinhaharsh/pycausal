@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 
 from utils import get_psd_matrix
-
+from typing import Union, List
 
 class SimulateDataset:
     def __init__(self,
@@ -16,7 +16,7 @@ class SimulateDataset:
                  num_p,
                  num_i,
                  num_covariates,
-                 coef_c,
+                 coef_c: Union[float, List[float]],
                  coef_p,
                  coef_i,
                  eta):
