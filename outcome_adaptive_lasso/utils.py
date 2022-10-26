@@ -92,5 +92,12 @@ def near_pd(matrix, nit=10):
     return Yk
 
 
+def check_overlap(data1, data2):
+    bin_edges = np.histogram_bin_edges(np.concatenate([data1, data2]))
+    hist1, _ = np.histogram(data1, bins=bin_edges)
+    hist2, _ = np.histogram(data2, bins=bin_edges)
+    return np.minimum(hist1, hist2).sum() > 10
+
+
 if __name__ == '__main__':
     psd = get_psd_matrix(4, 1)
