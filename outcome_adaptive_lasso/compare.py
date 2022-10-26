@@ -31,15 +31,22 @@ def calc_vanilla_beta(A, Y, X):
     return coef
 
 
-def compare_methods():
-    simulation = SimulateDataset(num_c=2,
-                                 num_p=2,
-                                 num_i=2,
-                                 num_covariates=7,
-                                 coef_c=0.6,
-                                 coef_p=0.6,
-                                 coef_i=1,
-                                 eta=0)
+def compare_methods(num_c=2,
+                    num_p=2,
+                    num_i=2,
+                    num_covariates=7,
+                    coef_c=0.6,
+                    coef_p=0.6,
+                    coef_i=1,
+                    eta=0):
+    simulation = SimulateDataset(num_c=num_c,
+                                 num_p=num_p,
+                                 num_i=num_i,
+                                 num_covariates=num_covariates,
+                                 coef_c=coef_c,
+                                 coef_p=coef_p,
+                                 coef_i=coef_i,
+                                 eta=eta)
     dataset = simulation.generate_dataset()
     A = dataset.pop('A')
     Y = dataset.pop('Y')
@@ -62,8 +69,26 @@ def compare_methods():
 
 def run_multiple_times(visualize=False):
     ate = list()
+    filename = timestamp()
+    params = {
+        'num_c': 2,
+        'num_p': 2,
+        'num_i': 2,
+        'num_covariates': 200,
+        'coef_c': [0.7, 0.5],
+        'coef_p': 0.8,
+        'coef_i': 0.9,
+        'eta': 0
+    }
+    save_dict2json(OUT_DIR, filename, params)
+
     for i in range(100):
-        estimates = compare_methods()
+        estimates = compare_methods(
+            params['num_c'], params['num_p'], params['num_i'],
+            params['num_covariates'], params['coef_c'],
+            params['coef_p'], params['coef_i'], params['eta']
+        )
+
         ate.extend(estimates.items())
         # for key, value in estimates.items():
         #     ate.append((key, value))
