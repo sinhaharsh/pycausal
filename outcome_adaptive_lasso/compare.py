@@ -1,5 +1,6 @@
 from collections import defaultdict
 
+import numpy as np
 import pandas as pd
 from causallib.estimation import IPW
 from sklearn.linear_model import LogisticRegression, LinearRegression
@@ -143,6 +144,7 @@ def subplot_violin(data, folder, filename):
     fullpath = Path(folder) / (filename + '.png')
 
     fig.savefig(fullpath, dpi=300)
+    plt.close(fig)
 
 
 if __name__ == '__main__':
