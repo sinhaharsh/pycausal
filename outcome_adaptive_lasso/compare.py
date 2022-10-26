@@ -1,10 +1,11 @@
 from collections import defaultdict
 
 from causallib.estimation import IPW
-from sklearn.linear_model import LogisticRegression
+from sklearn.linear_model import LogisticRegression, LinearRegression
 from scipy import stats
 
 from simulation import SimulateDataset
+import statsmodels.api as sm
 
 
 def calc_ate_ipw(A, Y, X):
@@ -14,6 +15,16 @@ def calc_ate_ipw(A, Y, X):
     outcomes = ipw.estimate_population_outcome(X, A, Y, w=weights)
     effect = ipw.estimate_effect(outcomes[1], outcomes[0])
     return effect[0]
+
+
+def calc_vanilla_beta(A, Y, X):
+    # fit regression from covariates X and exposure A to outcome Y
+    XA = X.merge(A.to_frame(), left_index=True, right_index=True)
+    lr = LinearRegression(fit_intercept=True).fit(XA, Y)
+
+    # extract the coefficients of the covariates
+    coef = lr.coef_.flatten()[-1]
+    return coef
 
 
 def compare_methods():
@@ -36,6 +47,7 @@ def compare_methods():
                          [col for col in dataset if col.startswith('Xi')]]
     X_all = dataset[[col for col in dataset if col.startswith('X')]]
     results = {
+        'regression': calc_vanilla_beta(A, Y, X_all),
         'conf': calc_ate_ipw(A, Y, X_conf),
         'target': calc_ate_ipw(A, Y, X_target),
         'pot_conf': calc_ate_ipw(A, Y, X_pot_conf),
