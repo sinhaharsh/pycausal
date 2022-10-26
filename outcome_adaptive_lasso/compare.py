@@ -59,12 +59,16 @@ def compare_methods():
     return results
 
 
-def run_multiple_times():
-    ate = defaultdict(list)
+def run_multiple_times(visualize=False):
+    ate = list()
     for i in range(100):
         estimates = compare_methods()
-        for key, value in estimates.items():
-            ate[key].append(value)
+        ate.extend(estimates.items())
+        # for key, value in estimates.items():
+        #     ate.append((key, value))
+    ate_df = pd.DataFrame(ate, columns=['Method', 'Estimate'])
+    if visualize:
+        subplot_violin(ate_df)
     return ate
 
 
@@ -80,4 +84,4 @@ def subplot_violin(data, filename):
 
 
 if __name__ == '__main__':
-    results = run_multiple_times()
+    results = run_multiple_times(visualize=True)
