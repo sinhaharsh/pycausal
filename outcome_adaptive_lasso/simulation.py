@@ -86,9 +86,11 @@ class SimulateDataset:
             A = np.random.binomial(np.ones(self.num_covariates, dtype=int),
                                expit(np.dot(X, nu)))
 
-            warnings.warn("Regenerating treatment to ensure atleast one sample for both classes - 0 and 1.")
-            if np.all(A) != A[0]:
+            if np.all(A == A[0]):
+                warnings.warn("Regenerating treatment to ensure atleast one sample for both classes - 0 and 1.")
+            else:
                 break
+
         Y = np.random.randn(self.num_covariates) + self.eta*A + np.dot(X, beta)
         col_names = self.generate_col_names()
         df = pd.DataFrame(np.hstack([A.reshape(-1, 1), Y.reshape(-1, 1), X]),
