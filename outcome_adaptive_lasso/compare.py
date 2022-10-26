@@ -139,6 +139,24 @@ def subplot_violin(data, folder, filename):
                    inner='quartile')
     ax.grid()
     ax.set_title('Different estimation alternatives')
+    lines = ax.get_lines()
+    categories = range(len(lines)//3)
+
+    for cat in categories:
+        value_list = lines[1 + cat * 3].get_ydata()
+        if len(value_list) > 1:
+            y = round(value_list[1], 2)
+            ax.text(
+                cat,
+                y,
+                f'{y}',
+                ha='center',
+                va='center',
+                fontweight='bold',
+                size=10,
+                color='white',
+                bbox=dict(facecolor='#445A64'))
+
     plt.tight_layout()
 
     if not Path(folder).exists():
