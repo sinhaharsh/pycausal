@@ -17,8 +17,9 @@ from utils import check_overlap
 OUT_DIR = './data/'
 
 
-def calc_ate_ipw(A, Y, X, solver='liblinear', C=1e-2, max_iter=500):
-    ipw = IPW(LogisticRegression(solver=solver, penalty='l1', C=C,
+def calc_ate_ipw(A, Y, X,
+                 solver='liblinear', penalty='l1', C=1e-2, max_iter=500):
+    ipw = IPW(LogisticRegression(solver=solver, penalty=penalty, C=C,
                                  max_iter=max_iter), use_stabilized=True).fit(X, A)
     if check_balance(A, Y, X, ipw, visualize=False):
         print(f"Num_features : {X.shape[0]}, No overlap, IPW cannot be estimated.")
@@ -65,7 +66,8 @@ def check_balance(A, Y, X, ipw, folder=OUT_DIR, visualize=False):
 def compare_methods(num_c, num_p, num_i,
                     num_covariates,
                     coef_c, coef_p, coef_i,
-                    eta, solver='liblinear', C=1e-2, max_iter=500):
+                    eta, solver='liblinear', penalty='l1',
+                    C=1e-2, max_iter=500):
     simulation = SimulateDataset(num_c=num_c,
                                  num_p=num_p,
                                  num_i=num_i,
@@ -86,10 +88,14 @@ def compare_methods(num_c, num_p, num_i,
     X_all = dataset[[col for col in dataset if col.startswith('X')]]
     results = {
         'regression': calc_vanilla_beta(A, Y, X_all),
-        'conf': calc_ate_ipw(A, Y, X_conf, solver=solver, C=C, max_iter=max_iter),
-        'target': calc_ate_ipw(A, Y, X_target, solver=solver, C=C, max_iter=max_iter),
-        'pot_conf': calc_ate_ipw(A, Y, X_pot_conf, solver=solver, C=C, max_iter=max_iter),
-        'all': calc_ate_ipw(A, Y, X_all, solver=solver, C=C, max_iter=max_iter)
+        'conf': calc_ate_ipw(A, Y, X_conf, penalty=penalty,
+                             solver=solver, C=C, max_iter=max_iter),
+        'target': calc_ate_ipw(A, Y, X_target, penalty=penalty,
+                               solver=solver, C=C, max_iter=max_iter),
+        'pot_conf': calc_ate_ipw(A, Y, X_pot_conf, penalty=penalty,
+                                 solver=solver, C=C, max_iter=max_iter),
+        'all': calc_ate_ipw(A, Y, X_all, penalty=penalty,
+                            solver=solver, C=C, max_iter=max_iter)
     }
     return results
 
@@ -107,8 +113,9 @@ def run_multiple_times(visualize=False):
         'coef_i': 0.9,
         'eta': 0,
         'solver': 'liblinear',
-        'C': 1e-1,
-        'max_iter': 500
+        'C': 1e2,
+        'max_iter': 500,
+        'penalty': 'l1',
     }
 
     for i in range(100):
