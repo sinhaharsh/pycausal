@@ -9,6 +9,7 @@ from simulation import SimulateDataset
 import statsmodels.api as sm
 import seaborn as sns
 import matplotlib.pyplot as plt
+from utils import timestamp
 
 
 def calc_ate_ipw(A, Y, X):

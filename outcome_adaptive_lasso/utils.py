@@ -2,6 +2,14 @@ import warnings
 
 import numpy as np
 
+def timestamp() -> str:
+    """
+    Generates time string in the specified format
+    @return: time cast as string
+    """
+    time_string = time.strftime("%m_%d_%Y_%H_%M")
+    return time_string
+
 def print_corr(df):
     A = df.pop('A')
     Y = df.pop('Y')
