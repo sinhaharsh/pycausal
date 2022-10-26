@@ -18,7 +18,7 @@ OUT_DIR = './data/'
 def calc_ate_ipw(A, Y, X):
     ipw = IPW(LogisticRegression(solver='liblinear', penalty='l1', C=1e2,
                                  max_iter=500), use_stabilized=False).fit(X, A)
-    weights = ipw.compute_weights(X, A)
+    weights = ipw.compute_weights(X, A, treatment_values=1)
     outcomes = ipw.estimate_population_outcome(X, A, Y, w=weights)
     effect = ipw.estimate_effect(outcomes[1], outcomes[0])
     return effect[0]
