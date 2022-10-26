@@ -13,6 +13,8 @@ from utils import timestamp, save_dict2json
 from pathlib import Path
 
 
+OUT_DIR = './data/'
+
 def calc_ate_ipw(A, Y, X):
     ipw = IPW(LogisticRegression(solver='liblinear', penalty='l1', C=1e2,
                                  max_iter=500), use_stabilized=False).fit(X, A)
