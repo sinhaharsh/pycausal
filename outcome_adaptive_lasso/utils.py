@@ -1,6 +1,10 @@
 import warnings
 
 import numpy as np
+from pathlib import Path
+import json
+import time
+
 
 def timestamp() -> str:
     """
@@ -9,6 +13,15 @@ def timestamp() -> str:
     """
     time_string = time.strftime("%m_%d_%Y_%H_%M")
     return time_string
+
+
+def save_dict2json(folder, filename, dictionary):
+    if not Path(folder).exists():
+        Path(folder).mkdir(parents=True)
+    fullpath = Path(folder)/(filename+'.json')
+    with open(fullpath, 'w') as fp:
+        json.dump(dictionary, fp, indent=4)
+
 
 def print_corr(df):
     A = df.pop('A')
