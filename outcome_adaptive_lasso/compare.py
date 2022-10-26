@@ -9,7 +9,8 @@ from simulation import SimulateDataset
 import statsmodels.api as sm
 import seaborn as sns
 import matplotlib.pyplot as plt
-from utils import timestamp
+from utils import timestamp, save_dict2json
+from pathlib import Path
 
 
 def calc_ate_ipw(A, Y, X):
@@ -98,7 +99,7 @@ def run_multiple_times(visualize=False):
     return ate
 
 
-def subplot_violin(data, filename):
+def subplot_violin(data, folder, filename):
     # if not isinstance(data, pd.DataFrame):
     #     data = pd.DataFrame(data)
     fig, ax = plt.subplots(1, 1, figsize=(8, 8))
@@ -106,7 +107,12 @@ def subplot_violin(data, filename):
     ax.grid()
     ax.set_title('Different estimation alternatives')
     plt.tight_layout()
-    fig.savefig("estimation.png", dpi=300)
+
+    if not Path(folder).exists():
+        Path(folder).mkdir(parents=True)
+    fullpath = Path(folder) / (filename + '.png')
+
+    fig.savefig(fullpath, dpi=300)
 
 
 if __name__ == '__main__':
