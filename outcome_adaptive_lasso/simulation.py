@@ -1,3 +1,5 @@
+import warnings
+
 import numpy as np
 import pandas as pd
 from scipy.special import expit
@@ -68,20 +70,25 @@ class SimulateDataset:
         return beta, nu
 
     def generate_dataset(self):
-        # covariance matrix of the Gaussian covariates.
-        cov_x = get_psd_matrix(self.num_covariates, diagonal=1)
+        while True:
+            # covariance matrix of the Gaussian covariates.
+            cov_x = get_psd_matrix(self.num_covariates, diagonal=1)
 
-        X = np.random.multivariate_normal(mean=0 * np.ones(self.num_covariates),
-                                          cov=cov_x,
-                                          size=self.num_covariates)
-        # Normalize covariates to have 0 mean unit std
-        scaler = StandardScaler(copy=False)
-        scaler.fit_transform(X)
+            X = np.random.multivariate_normal(mean=0 * np.ones(self.num_covariates),
+                                              cov=cov_x,
+                                              size=self.num_covariates)
+            # Normalize covariates to have 0 mean unit std
+            scaler = StandardScaler(copy=False)
+            scaler.fit_transform(X)
 
-        # Load beta and nu from the predefined scenarios
-        beta, nu = self.load_scenario()
-        A = np.random.binomial(np.ones(self.num_covariates, dtype=int),
+            # Load beta and nu from the predefined scenarios
+            beta, nu = self.load_scenario()
+            A = np.random.binomial(np.ones(self.num_covariates, dtype=int),
                                expit(np.dot(X, nu)))
+
+            warnings.warn("Regenerating treatment to ensure atleast one sample for both classes - 0 and 1.")
+            if np.all(A) != A[0]:
+                break
         Y = np.random.randn(self.num_covariates) + self.eta*A + np.dot(X, beta)
         col_names = self.generate_col_names()
         df = pd.DataFrame(np.hstack([A.reshape(-1, 1), Y.reshape(-1, 1), X]),
