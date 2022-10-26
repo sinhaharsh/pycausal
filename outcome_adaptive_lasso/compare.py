@@ -93,8 +93,6 @@ def run_multiple_times(visualize=False):
         )
 
         ate.extend(estimates.items())
-        # for key, value in estimates.items():
-        #     ate.append((key, value))
     ate_df = pd.DataFrame(ate, columns=['Method', 'Estimate'])
     if visualize:
         subplot_violin(ate_df, OUT_DIR, filename)
