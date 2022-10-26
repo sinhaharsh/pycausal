@@ -11,6 +11,8 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from utils import timestamp, save_dict2json
 from pathlib import Path
+from utils import check_overlap
+
 
 OUT_DIR = './data/'
 
@@ -18,7 +20,10 @@ OUT_DIR = './data/'
 def calc_ate_ipw(A, Y, X, solver='liblinear', C=1e-2, max_iter=500):
     ipw = IPW(LogisticRegression(solver=solver, penalty='l1', C=C,
                                  max_iter=max_iter), use_stabilized=True).fit(X, A)
-    weights = ipw.compute_weights(X, A, treatment_values=1)
+    if check_balance(A, Y, X, ipw, visualize=False):
+        print(f"Num_features : {X.shape[0]}, No overlap, IPW cannot be estimated.")
+        return np.NAN
+    weights = ipw.compute_weights(X, A, treatment_values=1, clip_min=0.2, clip_max=0.8)
     outcomes = ipw.estimate_population_outcome(X, A, Y, w=weights)
     effect = ipw.estimate_effect(outcomes[1], outcomes[0])
     return effect[0]
@@ -32,6 +37,29 @@ def calc_vanilla_beta(A, Y, X):
     # extract the coefficients of the covariates
     coef = lr.coef_.flatten()[-1]
     return coef
+
+
+def check_balance(A, Y, X, ipw, folder=OUT_DIR, visualize=False):
+    propensity = ipw.compute_propensity(X, A, treatment_values=1)
+    AP = pd.concat({'A': A,
+                    'P': propensity}, axis=1)
+    if visualize:
+        fig, ax = plt.subplots(1, 1, figsize=(8, 8))
+        sns.displot(AP, x="P", hue="A", kind="hist", multiple="stack")
+        ax.grid()
+        ax.set_title('Distributional balance')
+        plt.tight_layout()
+        if not Path(folder).exists():
+            Path(folder).mkdir(parents=True)
+        fullpath = Path(folder) / (timestamp() + '.png')
+
+        plt.savefig(fullpath, dpi=300)
+        plt.close(fig)
+    if check_overlap(AP.loc[AP['A'] == 1, 'P'],
+                     AP.loc[AP['A'] == 0, 'P']):
+        return True
+    return False
+
 
 
 def compare_methods(num_c, num_p, num_i,
