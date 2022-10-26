@@ -22,8 +22,8 @@ def calc_ate_ipw(A, Y, X,
                  solver='liblinear', penalty='l1', C=1e-2, max_iter=500):
     ipw = IPW(LogisticRegression(solver=solver, penalty=penalty, C=C,
                                  max_iter=max_iter), use_stabilized=True).fit(X, A)
-    if check_balance(A, Y, X, ipw, visualize=False):
-        print(f"Num_features : {X.shape[0]}, No overlap, IPW cannot be estimated.")
+    if not check_balance(A, Y, X, ipw, visualize=False):
+        print(f"Num_features : {X.shape[1]}, No overlap, IPW cannot be estimated.")
         return np.NAN
     weights = ipw.compute_weights(X, A, treatment_values=1, clip_min=0.2, clip_max=0.8)
     outcomes = ipw.estimate_population_outcome(X, A, Y, w=weights)
