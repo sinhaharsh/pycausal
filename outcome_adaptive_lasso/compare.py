@@ -12,12 +12,12 @@ import matplotlib.pyplot as plt
 from utils import timestamp, save_dict2json
 from pathlib import Path
 
-
 OUT_DIR = './data/'
 
-def calc_ate_ipw(A, Y, X):
-    ipw = IPW(LogisticRegression(solver='liblinear', penalty='l1', C=1e2,
-                                 max_iter=500), use_stabilized=False).fit(X, A)
+
+def calc_ate_ipw(A, Y, X, solver='liblinear', C=1e-2, max_iter=500):
+    ipw = IPW(LogisticRegression(solver=solver, penalty='l1', C=C,
+                                 max_iter=max_iter), use_stabilized=True).fit(X, A)
     weights = ipw.compute_weights(X, A, treatment_values=1)
     outcomes = ipw.estimate_population_outcome(X, A, Y, w=weights)
     effect = ipw.estimate_effect(outcomes[1], outcomes[0])
@@ -34,14 +34,10 @@ def calc_vanilla_beta(A, Y, X):
     return coef
 
 
-def compare_methods(num_c,
-                    num_p,
-                    num_i,
+def compare_methods(num_c, num_p, num_i,
                     num_covariates,
-                    coef_c,
-                    coef_p,
-                    coef_i,
-                    eta):
+                    coef_c, coef_p, coef_i,
+                    eta, solver='liblinear', C=1e-2, max_iter=500):
     simulation = SimulateDataset(num_c=num_c,
                                  num_p=num_p,
                                  num_i=num_i,
@@ -62,10 +58,10 @@ def compare_methods(num_c,
     X_all = dataset[[col for col in dataset if col.startswith('X')]]
     results = {
         'regression': calc_vanilla_beta(A, Y, X_all),
-        'conf': calc_ate_ipw(A, Y, X_conf),
-        'target': calc_ate_ipw(A, Y, X_target),
-        'pot_conf': calc_ate_ipw(A, Y, X_pot_conf),
-        'all': calc_ate_ipw(A, Y, X_all)
+        'conf': calc_ate_ipw(A, Y, X_conf, solver=solver, C=C, max_iter=max_iter),
+        'target': calc_ate_ipw(A, Y, X_target, solver=solver, C=C, max_iter=max_iter),
+        'pot_conf': calc_ate_ipw(A, Y, X_pot_conf, solver=solver, C=C, max_iter=max_iter),
+        'all': calc_ate_ipw(A, Y, X_all, solver=solver, C=C, max_iter=max_iter)
     }
     return results
 
@@ -81,15 +77,14 @@ def run_multiple_times(visualize=False):
         'coef_c': [0.7, 0.5],
         'coef_p': 0.8,
         'coef_i': 0.9,
-        'eta': 0
+        'eta': 0,
+        'solver': 'liblinear',
+        'C': 1e-1,
+        'max_iter': 500
     }
 
     for i in range(100):
-        estimates = compare_methods(
-            params['num_c'], params['num_p'], params['num_i'],
-            params['num_covariates'], params['coef_c'],
-            params['coef_p'], params['coef_i'], params['eta']
-        )
+        estimates = compare_methods(**params)
 
         ate.extend(estimates.items())
     ate_df = pd.DataFrame(ate, columns=['Method', 'Estimate'])
