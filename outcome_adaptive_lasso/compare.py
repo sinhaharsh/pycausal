@@ -1,11 +1,14 @@
 from collections import defaultdict
 
+import pandas as pd
 from causallib.estimation import IPW
 from sklearn.linear_model import LogisticRegression, LinearRegression
 from scipy import stats
 
 from simulation import SimulateDataset
 import statsmodels.api as sm
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 
 def calc_ate_ipw(A, Y, X):
@@ -63,6 +66,17 @@ def run_multiple_times():
         for key, value in estimates.items():
             ate[key].append(value)
     return ate
+
+
+def subplot_violin(data, filename):
+    # if not isinstance(data, pd.DataFrame):
+    #     data = pd.DataFrame(data)
+    fig, ax = plt.subplots(1, 1, figsize=(8, 8))
+    sns.violinplot(x='Method', y='Estimate', data=data, ax=ax, palette=sns.color_palette("Set1"))
+    ax.grid()
+    ax.set_title('Different estimation alternatives')
+    plt.tight_layout()
+    fig.savefig("estimation.png", dpi=300)
 
 
 if __name__ == '__main__':
