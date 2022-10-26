@@ -34,14 +34,14 @@ def calc_vanilla_beta(A, Y, X):
     return coef
 
 
-def compare_methods(num_c=2,
-                    num_p=2,
-                    num_i=2,
-                    num_covariates=7,
-                    coef_c=0.6,
-                    coef_p=0.6,
-                    coef_i=1,
-                    eta=0):
+def compare_methods(num_c,
+                    num_p,
+                    num_i,
+                    num_covariates,
+                    coef_c,
+                    coef_p,
+                    coef_i,
+                    eta):
     simulation = SimulateDataset(num_c=num_c,
                                  num_p=num_p,
                                  num_i=num_i,
