@@ -83,7 +83,6 @@ def run_multiple_times(visualize=False):
         'coef_i': 0.9,
         'eta': 0
     }
-    save_dict2json(OUT_DIR, filename, params)
 
     for i in range(100):
         estimates = compare_methods(
@@ -96,6 +95,7 @@ def run_multiple_times(visualize=False):
     ate_df = pd.DataFrame(ate, columns=['Method', 'Estimate'])
     if visualize:
         subplot_violin(ate_df, OUT_DIR, filename)
+    save_dict2json(OUT_DIR, filename, params)
     return ate
 
 
