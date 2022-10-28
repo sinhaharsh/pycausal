@@ -239,14 +239,6 @@ def subplot_violin(data, folder, filename, fig, ax):
                 color='white',
                 bbox=dict(facecolor='#445A64'))
 
-    plt.tight_layout()
-
-    if not Path(folder).exists():
-        Path(folder).mkdir(parents=True)
-    fullpath = Path(folder) / (filename + '.png')
-
-    fig.savefig(fullpath, dpi=300)
-    plt.close(fig)
 
 
 if __name__ == '__main__':
