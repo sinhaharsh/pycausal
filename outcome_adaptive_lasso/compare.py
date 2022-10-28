@@ -127,6 +127,14 @@ def run_multiple_times(visualize=False):
     if visualize:
         subplot_violin(ate_df, OUT_DIR, filename)
     save_dict2json(OUT_DIR, filename, params)
+    plt.tight_layout()
+
+    if not Path(OUT_DIR).exists():
+        Path(OUT_DIR).mkdir(parents=True)
+    fullpath = Path(OUT_DIR) / (filename + '.png')
+
+    fig.savefig(fullpath, dpi=300)
+    plt.close(fig)
     return ate
 
 def vary_eta(visualize=False):
