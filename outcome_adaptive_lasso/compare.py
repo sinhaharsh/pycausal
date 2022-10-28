@@ -129,6 +129,57 @@ def run_multiple_times(visualize=False):
     save_dict2json(OUT_DIR, filename, params)
     return ate
 
+def vary_eta(visualize=False):
+
+    possible_values = range(-6, 6, 2)
+    nrow = 2
+    ncol = 3
+    fig, ax = plt.subplots(nrow, ncol, figsize=(16, 16))
+    filename = timestamp()
+    for j, eta in enumerate(possible_values):
+        ate = list()
+        params = {
+            'num_c': 5,
+            'num_p': 2,
+            'num_i': 2,
+            'num_covariates': 100,
+            'coef_c': [0.01, 0.02],
+            'coef_p': 0.3,
+            'coef_i': 0.1,
+            'eta': eta,
+            'solver': 'liblinear',
+            'C': 1e-1,
+            'max_iter': 500,
+            'penalty': 'l1',
+        }
+        for i in range(100):
+            estimates = compare_methods(**params)
+            ate.extend(estimates.items())
+        ate_df = pd.DataFrame(ate, columns=['Method', 'Estimate'])
+        if visualize:
+            true_ate = eta
+            multiplot_violin(ate_df, true_ate, filename, fig, ax[j//ncol, j % ncol])
+
+    save_dict2json(OUT_DIR, filename, params)
+    plt.tight_layout()
+
+    if not Path(OUT_DIR).exists():
+        Path(OUT_DIR).mkdir(parents=True)
+    fullpath = Path(OUT_DIR) / (filename + '.png')
+
+    fig.savefig(fullpath, dpi=300)
+    plt.close(fig)
+    return ate
+
+
+def multiplot_violin(data, true_ate, filename, fig, ax):
+    # if not isinstance(data, pd.DataFrame):
+    #     data = pd.DataFrame(data)
+    sns.violinplot(x='Method', y='Estimate', data=data,
+                   ax=ax, palette=sns.color_palette("Set1"),
+                   inner='quartile')
+    sns.swarmplot(x='Method', y='Estimate', data=data,
+                  ax=ax, color="white")
 
 def subplot_violin(data, folder, filename):
     # if not isinstance(data, pd.DataFrame):
