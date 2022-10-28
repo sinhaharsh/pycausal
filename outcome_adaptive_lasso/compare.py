@@ -125,7 +125,8 @@ def run_multiple_times(visualize=False):
         ate.extend(estimates.items())
     ate_df = pd.DataFrame(ate, columns=['Method', 'Estimate'])
     if visualize:
-        subplot_violin(ate_df, OUT_DIR, filename)
+        fig, ax = plt.subplots(1, 1, figsize=(8, 8))
+        subplot_violin(ate_df, OUT_DIR, filename, fig, ax)
     save_dict2json(OUT_DIR, filename, params)
     plt.tight_layout()
 
