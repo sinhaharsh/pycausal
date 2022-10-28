@@ -43,7 +43,7 @@ def get_psd_matrix(size, diagonal=1):
     # https://www.maths.manchester.ac.uk/~higham/narep/narep369.pdf
     # https://stackoverflow.com/a/10940283/3140172
     while True:
-        A = 0.1*np.random.rand(size, size)
+        A = 0.01*np.random.rand(size, size)
         B = np.dot(A, A.transpose())
         np.fill_diagonal(B, diagonal)
         C = near_pd(B, nit=100)
