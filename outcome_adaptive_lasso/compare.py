@@ -189,7 +189,30 @@ def multiplot_violin(data, true_ate, filename, fig, ax):
     sns.swarmplot(x='Method', y='Estimate', data=data,
                   ax=ax, color="white")
 
-def subplot_violin(data, folder, filename):
+    ax.grid()
+    # ax.set_title('Different estimation alternatives')
+    lines = ax.get_lines()
+    categories = range(len(lines)//3)
+
+    for cat in categories:
+        value_list = lines[1 + cat * 3].get_ydata()
+        if len(value_list) > 1:
+            y = round(value_list[1], 2)
+            ax.text(
+                cat,
+                y,
+                f'{y}',
+                ha='center',
+                va='center',
+                fontweight='bold',
+                size=10,
+                color='white',
+                bbox=dict(facecolor='#445A64'))
+
+    ax.axhline(y=true_ate, color='r', linestyle='-')
+
+
+def subplot_violin(data, folder, filename, fig, ax):
     # if not isinstance(data, pd.DataFrame):
     #     data = pd.DataFrame(data)
     fig, ax = plt.subplots(1, 1, figsize=(8, 8))
