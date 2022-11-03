@@ -101,7 +101,7 @@ def compare_methods(num_c, num_p, num_i,
     return results
 
 
-def run_multiple_times(visualize=False):
+def run_multiple_times(params, visualize=False):
     ate = list()
     fig, ax = plt.subplots(1, 1, figsize=(8, 8))
     title = 'Eta:{},Samples:{},Covariates:{},Scenario:{},Rho:{}'.format(
