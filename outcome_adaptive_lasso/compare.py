@@ -11,8 +11,7 @@ from simulation import SimulateDataset
 from utils import check_overlap
 from utils import timestamp, save_dict2json
 
-
-OUT_DIR = './data/'
+OUT_DIR = './susan/'
 
 
 def calc_ate_ipw(A, Y, X,
