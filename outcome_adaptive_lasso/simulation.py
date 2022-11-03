@@ -18,14 +18,17 @@ class SimulateDataset:
                  num_p,
                  num_i,
                  num_covariates,
+                 num_samples,
                  coef_c: Union[float, List[float]],
                  coef_p,
                  coef_i,
-                 eta):
+                 eta,
+                 rho):
+        self.num_samples = num_samples
         self.num_c = num_c
         self.num_p = num_p
         self.num_i = num_i
-
+        self.rho = rho
         self.num_covariates = num_covariates
         self.num_s = self.num_covariates - num_c - num_p - num_i
 
@@ -70,20 +73,21 @@ class SimulateDataset:
         return beta, nu
 
     def generate_dataset(self):
+        susan_rho = True
         while True:
             # covariance matrix of the Gaussian covariates.
             cov_x = get_psd_matrix(self.num_covariates, diagonal=1)
 
             X = np.random.multivariate_normal(mean=0 * np.ones(self.num_covariates),
                                               cov=cov_x,
-                                              size=self.num_covariates)
+                                              size=self.num_samples)
             # Normalize covariates to have 0 mean unit std
             scaler = StandardScaler(copy=False)
             scaler.fit_transform(X)
 
             # Load beta and nu from the predefined scenarios
             beta, nu = self.load_scenario()
-            A = np.random.binomial(np.ones(self.num_covariates, dtype=int),
+            A = np.random.binomial(np.ones(self.num_samples, dtype=int),
                                expit(np.dot(X, nu)))
 
             if np.all(A == A[0]):
@@ -91,7 +95,7 @@ class SimulateDataset:
             else:
                 break
 
-        Y = np.random.randn(self.num_covariates) + self.eta*A + np.dot(X, beta)
+        Y = np.random.randn(self.num_samples) + self.eta*A + np.dot(X, beta)
         col_names = self.generate_col_names()
         df = pd.DataFrame(np.hstack([A.reshape(-1, 1), Y.reshape(-1, 1), X]),
                           columns=col_names)

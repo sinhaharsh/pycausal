@@ -62,20 +62,21 @@ def check_balance(A, Y, X, ipw, folder=OUT_DIR, visualize=False):
     return False
 
 
-
 def compare_methods(num_c, num_p, num_i,
-                    num_covariates,
+                    num_covariates, num_samples,
                     coef_c, coef_p, coef_i,
-                    eta, solver='liblinear', penalty='l1',
-                    C=1e-2, max_iter=500):
+                    eta, rho, solver='liblinear', penalty='l1',
+                    C=1e-2, max_iter=500, **kwargs):
     simulation = SimulateDataset(num_c=num_c,
                                  num_p=num_p,
                                  num_i=num_i,
                                  num_covariates=num_covariates,
+                                 num_samples=num_samples,
                                  coef_c=coef_c,
                                  coef_p=coef_p,
                                  coef_i=coef_i,
-                                 eta=eta)
+                                 eta=eta,
+                                 rho=rho)
     dataset = simulation.generate_dataset()
     A = dataset.pop('A')
     Y = dataset.pop('Y')
