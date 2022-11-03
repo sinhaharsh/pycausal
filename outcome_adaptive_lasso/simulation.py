@@ -76,7 +76,11 @@ class SimulateDataset:
         susan_rho = True
         while True:
             # covariance matrix of the Gaussian covariates.
-            cov_x = get_psd_matrix(self.num_covariates, diagonal=1)
+            if not susan_rho:
+                cov_x = get_psd_matrix(self.num_covariates, diagonal=1)
+            else:
+                cov_x = np.eye(self.num_covariates) + \
+                        ~np.eye(self.num_covariates, dtype=bool) * self.rho
 
             X = np.random.multivariate_normal(mean=0 * np.ones(self.num_covariates),
                                               cov=cov_x,
