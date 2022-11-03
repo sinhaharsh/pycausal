@@ -213,7 +213,6 @@ def multiplot_violin(data, true_ate, filename, fig, ax):
 def subplot_violin(data, folder, title, fig, ax):
     # if not isinstance(data, pd.DataFrame):
     #     data = pd.DataFrame(data)
-    fig, ax = plt.subplots(1, 1, figsize=(8, 8))
     sns.violinplot(x='Method', y='Estimate', data=data,
                    ax=ax, palette=sns.color_palette("Set1"),
                    inner='quartile')
