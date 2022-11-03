@@ -144,20 +144,21 @@ def vary_eta(visualize=False):
     for j, eta in enumerate(possible_values):
         ate = list()
         params = {
-            'num_c': 5,
+            'num_c': 2,
             'num_p': 2,
             'num_i': 2,
-            'num_covariates': 100,
-            'coef_c': [0.01, 0.02],
-            'coef_p': 0.3,
-            'coef_i': 0.1,
+            'num_covariates': 200,
+            'num_samples': 1000,
+            'coef_c': [0.6, 1],
+            'coef_p': 0.6,
+            'coef_i': 1,
             'eta': eta,
             'solver': 'liblinear',
             'C': 1e-1,
             'max_iter': 500,
             'penalty': 'l1',
         }
-        for i in range(100):
+        for i in range(50):
             estimates = compare_methods(**params)
             ate.extend(estimates.items())
         ate_df = pd.DataFrame(ate, columns=['Method', 'Estimate'])
