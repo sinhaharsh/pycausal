@@ -1,18 +1,15 @@
-from collections import defaultdict
+from pathlib import Path
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import seaborn as sns
 from causallib.estimation import IPW
 from sklearn.linear_model import LogisticRegression, LinearRegression
-from scipy import stats
 
 from simulation import SimulateDataset
-import statsmodels.api as sm
-import seaborn as sns
-import matplotlib.pyplot as plt
-from utils import timestamp, save_dict2json
-from pathlib import Path
 from utils import check_overlap
+from utils import timestamp, save_dict2json
 
 
 OUT_DIR = './data/'
