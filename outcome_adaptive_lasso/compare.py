@@ -115,7 +115,6 @@ def run_multiple_times(visualize=False):
     filename = timestamp()+title.replace(':', '_').replace(',', '+')
     for i in range(50):
         estimates = compare_methods(**params)
-
         ate.extend(estimates.items())
     ate_df = pd.DataFrame(ate, columns=['Method', 'Estimate'])
     if visualize:
@@ -131,11 +130,12 @@ def run_multiple_times(visualize=False):
     fullpath = Path(OUT_DIR) / (filename + '.png')
 
     fig.savefig(fullpath, dpi=300)
+    plt.cla()
     plt.close(fig)
     return ate
 
-def vary_eta(visualize=False):
 
+def vary_eta(visualize=False):
     possible_values = range(-6, 6, 2)
     nrow = 2
     ncol = 3
