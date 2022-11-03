@@ -210,7 +210,7 @@ def multiplot_violin(data, true_ate, filename, fig, ax):
     ax.axhline(y=true_ate, color='r', linestyle='-')
 
 
-def subplot_violin(data, folder, filename, fig, ax):
+def subplot_violin(data, folder, title, fig, ax):
     # if not isinstance(data, pd.DataFrame):
     #     data = pd.DataFrame(data)
     fig, ax = plt.subplots(1, 1, figsize=(8, 8))
@@ -218,7 +218,7 @@ def subplot_violin(data, folder, filename, fig, ax):
                    ax=ax, palette=sns.color_palette("Set1"),
                    inner='quartile')
     ax.grid()
-    ax.set_title('Different estimation alternatives')
+    ax.set_title(title)
     lines = ax.get_lines()
     categories = range(len(lines)//3)
 
