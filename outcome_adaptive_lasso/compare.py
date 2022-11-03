@@ -190,7 +190,7 @@ def multiplot_violin(data, true_ate, filename, fig, ax):
     ax.grid()
     # ax.set_title('Different estimation alternatives')
     lines = ax.get_lines()
-    categories = range(len(lines)//3)
+    categories = range(len(lines) // 3)
 
     for cat in categories:
         value_list = lines[1 + cat * 3].get_ydata()
@@ -219,7 +219,7 @@ def subplot_violin(data, folder, title, fig, ax):
     ax.grid()
     ax.set_title(title)
     lines = ax.get_lines()
-    categories = range(len(lines)//3)
+    categories = range(len(lines) // 3)
 
     for cat in categories:
         value_list = lines[1 + cat * 3].get_ydata()
