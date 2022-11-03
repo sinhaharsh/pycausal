@@ -112,7 +112,8 @@ def run_multiple_times(visualize=False):
         params['rho']
     )
 
-    for i in range(100):
+    filename = timestamp()+title.replace(':', '_').replace(',', '+')
+    for i in range(50):
         estimates = compare_methods(**params)
 
         ate.extend(estimates.items())
