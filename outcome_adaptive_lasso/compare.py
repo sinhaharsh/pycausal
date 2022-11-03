@@ -103,21 +103,14 @@ def compare_methods(num_c, num_p, num_i,
 
 def run_multiple_times(visualize=False):
     ate = list()
-    filename = timestamp()
-    params = {
-        'num_c': 2,
-        'num_p': 2,
-        'num_i': 2,
-        'num_covariates': 200,
-        'coef_c': [0.7, 0.5],
-        'coef_p': 0.8,
-        'coef_i': 0.9,
-        'eta': 0,
-        'solver': 'liblinear',
-        'C': 1e2,
-        'max_iter': 500,
-        'penalty': 'l1',
-    }
+    fig, ax = plt.subplots(1, 1, figsize=(8, 8))
+    title = 'Eta:{},Samples:{},Covariates:{},Scenario:{},Rho:{}'.format(
+        params['eta'],
+        params['num_samples'],
+        params['num_covariates'],
+        params['scenario'],
+        params['rho']
+    )
 
     for i in range(100):
         estimates = compare_methods(**params)
