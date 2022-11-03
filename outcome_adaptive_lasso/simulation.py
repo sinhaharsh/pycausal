@@ -12,6 +12,7 @@ import pandas as pd
 from utils import get_psd_matrix
 from typing import Union, List
 
+
 class SimulateDataset:
     def __init__(self,
                  num_c,
