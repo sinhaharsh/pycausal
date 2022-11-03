@@ -163,7 +163,8 @@ def vary_eta(visualize=False):
         ate_df = pd.DataFrame(ate, columns=['Method', 'Estimate'])
         if visualize:
             true_ate = eta
-            multiplot_violin(ate_df, true_ate, filename, fig, ax[j//ncol, j % ncol])
+            multiplot_violin(ate_df, true_ate, filename, fig,
+                             ax[j // ncol, j % ncol])
 
     save_dict2json(OUT_DIR, filename, params)
     plt.tight_layout()
@@ -183,8 +184,8 @@ def multiplot_violin(data, true_ate, filename, fig, ax):
     sns.violinplot(x='Method', y='Estimate', data=data,
                    ax=ax, palette=sns.color_palette("Set1"),
                    inner='quartile')
-    sns.swarmplot(x='Method', y='Estimate', data=data,
-                  ax=ax, color="white")
+    sns.stripplot(x='Method', y='Estimate', data=data,
+                  ax=ax, color="white", alpha=.4)
 
     ax.grid()
     # ax.set_title('Different estimation alternatives')
