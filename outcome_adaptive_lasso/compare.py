@@ -119,8 +119,10 @@ def run_multiple_times(visualize=False):
         ate.extend(estimates.items())
     ate_df = pd.DataFrame(ate, columns=['Method', 'Estimate'])
     if visualize:
-        fig, ax = plt.subplots(1, 1, figsize=(8, 8))
-        subplot_violin(ate_df, OUT_DIR, filename, fig, ax)
+        if params['plot'] == 'violin':
+            subplot_violin(ate_df, OUT_DIR, title, fig, ax)
+        if params['plot'] == 'box':
+            subplot_box(ate_df, OUT_DIR, title, fig, ax)
     save_dict2json(OUT_DIR, filename, params)
     plt.tight_layout()
 
@@ -234,6 +236,28 @@ def subplot_violin(data, folder, filename, fig, ax):
                 color='white',
                 bbox=dict(facecolor='#445A64'))
 
+def subplot_box(data, folder, title, fig, ax):
+    sns.boxplot(x='Method', y='Estimate', data=data,
+               ax=ax, palette=sns.color_palette("Set1"))
+    ax.grid()
+    ax.set_title(title)
+    # lines = ax.get_lines()
+    # categories = range(len(lines) // 3)
+
+    # for cat in categories:
+    #     value_list = lines[1 + cat * 3].get_ydata()
+    #     if len(value_list) > 1:
+    #         y = round(value_list[1], 2)
+    #         ax.text(
+    #             cat,
+    #             y,
+    #             f'{y}',
+    #             ha='center',
+    #             va='center',
+    #             fontweight='bold',
+    #             size=10,
+    #             color='white',
+    #             bbox=dict(facecolor='#445A64'))
 
 
 if __name__ == '__main__':
