@@ -238,28 +238,32 @@ def subplot_violin(data, folder, title, fig, ax):
                 color='white',
                 bbox=dict(facecolor='#445A64'))
 
+
 def subplot_box(data, folder, title, fig, ax):
     sns.boxplot(x='Method', y='Estimate', data=data,
                ax=ax, palette=sns.color_palette("Set1"))
     ax.grid()
     ax.set_title(title)
-    # lines = ax.get_lines()
-    # categories = range(len(lines) // 3)
+    try:
+        lines = ax.get_lines()
+        categories = range(len(lines) // 6)
 
-    # for cat in categories:
-    #     value_list = lines[1 + cat * 3].get_ydata()
-    #     if len(value_list) > 1:
-    #         y = round(value_list[1], 2)
-    #         ax.text(
-    #             cat,
-    #             y,
-    #             f'{y}',
-    #             ha='center',
-    #             va='center',
-    #             fontweight='bold',
-    #             size=10,
-    #             color='white',
-    #             bbox=dict(facecolor='#445A64'))
+        for cat in categories:
+            value_list = lines[4 + cat * 6].get_ydata()
+            if len(value_list) > 1:
+                y = round(value_list[1], 2)
+                ax.text(
+                    cat,
+                    y,
+                    f'{y}',
+                    ha='center',
+                    va='center',
+                    fontweight='bold',
+                    size=10,
+                    color='white',
+                    bbox=dict(facecolor='#445A64'))
+    except:
+        return
 
 
 if __name__ == '__main__':
