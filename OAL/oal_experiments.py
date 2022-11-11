@@ -1,4 +1,6 @@
 from compare import run_multiple_times
+import warnings
+warnings.filterwarnings("ignore")
 
 situation1 = {
     'num_samples': 200,
@@ -43,7 +45,7 @@ for eta in eta_values:
                 'rho': rho,
                 'solver': 'liblinear',
                 'C': 1e-1,
-                'max_iter': 500,
+                'max_iter': 2000,
                 'penalty': 'l1',
                 'scenario': 1,
                 'plot': 'box'

@@ -7,10 +7,10 @@ import seaborn as sns
 from causallib.estimation import IPW
 from sklearn.linear_model import LogisticRegression, LinearRegression
 
-from simulation import SimulateDataset
-from utils import check_overlap
-from utils import timestamp, save_dict2json
-
+from OAL.simulation import SimulateDataset
+from OAL.utils import check_overlap
+from OAL.utils import timestamp, save_dict2json
+from OAL.outcome_adaptive_lasso import calc_outcome_adaptive_lasso
 OUT_DIR = './susan/'
 
 

@@ -9,7 +9,7 @@ from math import log
 import numpy as np
 import pandas as pd
 
-from utils import get_psd_matrix
+from OAL.utils import get_psd_matrix
 from typing import Union, List
 
 
