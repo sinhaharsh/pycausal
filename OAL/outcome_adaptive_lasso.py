@@ -103,7 +103,7 @@ def calc_oal_single_lambda(data, _lambda, gamma_factor):
     return effect, wamd
 
 
-def calc_outcome_adaptive_lasso(A, Y, X, gamma_factor=2,
+def calc_outcome_adaptive_lasso(data, gamma_factor=2,
                                 log_lambdas=None):
     """
     Calculate estimate of average treatment effect using the outcome adaptive
@@ -146,12 +146,10 @@ def calc_outcome_adaptive_lasso(A, Y, X, gamma_factor=2,
     # Calculate ATE for each lambda,
     # select the one minimizing the weighted absolute mean difference
     for il in range(len(lambdas)):
-        ate_vec[il], x_coefs, ipw = calc_oal_single_lambda(A, Y, X,
+        ate_vec[il], amd_vec[il] = calc_oal_single_lambda(data,
                                                            lambdas[il],
                                                            gamma_factor)
         # print("Coeff of first 8 covariates : {}".format(x_coefs[:8]))
-        amd_vec[il] = calc_wamd(A, X, ipw, x_coefs)
-
     return ate_vec[np.argmin(amd_vec)]
 
 
