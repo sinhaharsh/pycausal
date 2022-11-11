@@ -149,7 +149,7 @@ def calc_outcome_adaptive_lasso(data, gamma_factor=2,
                                                            lambdas[il],
                                                            gamma_factor)
         # print("Coeff of first 8 covariates : {}".format(x_coefs[:8]))
-    return ate_vec[np.argmin(amd_vec)]
+    return ate_vec[np.nanargmin(amd_vec)]
 
 
 if __name__ == '__main__':
