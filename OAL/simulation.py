@@ -1,8 +1,10 @@
 import warnings
+from typing import Union, List
 
 import numpy as np
 import pandas as pd
 from scipy.special import expit
+from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from math import log
 
@@ -110,3 +112,24 @@ class SimulateDataset:
                           columns=col_names)
         self.data = df
 
+    def create_train_test(self, test_size=0.3):
+        train, test = train_test_split(self.data,
+                                       test_size=test_size)
+        self.train_data = self.get_partition(train)
+        self.test_data = self.get_partition(test)
+
+    @staticmethod
+    def get_partition(data):
+        splits = {}
+        splits['A'] = data.pop('A')
+        splits['Y'] = data.pop('Y')
+        splits['X_conf'] = data[[col for col in data if col.startswith('Xc')]]
+        splits['X_target'] = data[
+            [col for col in data if col.startswith('Xc')] +
+            [col for col in data if col.startswith('Xp')]]
+        splits['X_pot_conf'] = data[
+            [col for col in data if col.startswith('Xc')] +
+            [col for col in data if col.startswith('Xp')] +
+            [col for col in data if col.startswith('Xi')]]
+        splits['X'] = data[[col for col in data if col.startswith('X')]]
+        return splits

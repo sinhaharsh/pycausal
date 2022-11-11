@@ -80,16 +80,9 @@ def compare_methods(num_c, num_p, num_i,
                                  coef_i=coef_i,
                                  eta=eta,
                                  rho=rho)
-    dataset = simulation.generate_dataset()
-    A = dataset.pop('A')
-    Y = dataset.pop('Y')
-    X_conf = dataset[[col for col in dataset if col.startswith('Xc')]]
-    X_target = dataset[[col for col in dataset if col.startswith('Xc')] +
-                       [col for col in dataset if col.startswith('Xp')]]
-    X_pot_conf = dataset[[col for col in dataset if col.startswith('Xc')] +
-                         [col for col in dataset if col.startswith('Xp')] +
-                         [col for col in dataset if col.startswith('Xi')]]
-    X_all = dataset[[col for col in dataset if col.startswith('X')]]
+    simulation.generate_dataset()
+    simulation.create_train_test()
+
     results = {
         'regression': calc_vanilla_beta(A, Y, X_all),
         'oal': calc_outcome_adaptive_lasso(A, Y, X_all),
