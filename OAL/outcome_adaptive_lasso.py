@@ -70,8 +70,11 @@ def calc_oal_single_lambda(data, _lambda, gamma_factor):
     gamma = 2 * (1 + gamma_factor - log(_lambda, n))
 
     # fit regression from covariates X and exposure A to outcome Y
-    XA = X.merge(A.to_frame(), left_index=True, right_index=True)
-    lr = LinearRegression(fit_intercept=True).fit(XA, Y)
+    XA_train = X_train.merge(A_train.to_frame(),
+                             left_index=True,
+                             right_index=True)
+    lr = LinearRegression(fit_intercept=True).fit(XA_train, Y_train)
+
 
     # extract the coefficients of the covariates
     x_coefs = lr.coef_.flatten()[:-1]
@@ -80,7 +83,7 @@ def calc_oal_single_lambda(data, _lambda, gamma_factor):
     weights = (np.abs(x_coefs)) ** (-gamma)
 
     # apply the penalization to the covariates themselves
-    X_w = X / weights
+    X_w = X_train / weights
 
     # fit logistic propensity score model from penalized covariates
     # to the exposure
@@ -89,12 +92,15 @@ def calc_oal_single_lambda(data, _lambda, gamma_factor):
                            penalty='l1',
                            C=1 / _lambda,
                            max_iter=400),
-        use_stabilized=False).fit(X_w, A)
+        use_stabilized=False).fit(X_w, A_train)
     # compute inverse propensity weighting and calculate ATE
-    weights = ipw.compute_weights(X_w, A)
-    outcomes = ipw.estimate_population_outcome(X_w, A, Y, w=weights)
+    weights_train = ipw.compute_weights(X_train, A_train)
+    weights_test = ipw.compute_weights(X_test, A_test)
+    outcomes = ipw.estimate_population_outcome(X_test, A_test, Y_test,
+                                               w=weights_test)
     effect = ipw.estimate_effect(outcomes[1], outcomes[0])
-    return effect, x_coefs, weights
+    wamd = calc_wamd(A_train, X_train, weights_train, x_coefs)
+    return effect, wamd
 
 
 def calc_outcome_adaptive_lasso(A, Y, X, gamma_factor=2,
