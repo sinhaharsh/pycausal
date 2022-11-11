@@ -6,13 +6,8 @@ import pandas as pd
 from scipy.special import expit
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-from math import log
-
-import numpy as np
-import pandas as pd
 
 from OAL.utils import get_psd_matrix
-from typing import Union, List
 
 
 class SimulateDataset:
