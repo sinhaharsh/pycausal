@@ -134,7 +134,6 @@ def calc_outcome_adaptive_lasso(data, gamma_factor=2,
     ate : estimate of the average treatment effect
     """
 
-    A, Y, X = check_input(A, Y, X)
 
     if log_lambdas is None:
         log_lambdas = [-10, -5, -2, -1, -0.75, -0.5, -0.25, 0.25, 0.49]
