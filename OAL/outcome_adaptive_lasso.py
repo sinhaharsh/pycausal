@@ -50,7 +50,7 @@ def calc_wamd(A, X, ipw, x_coefs, l_norm=1):
         np.abs(x_coefs))
 
 
-def calc_oal_single_lambda(data, _lambda, gamma_factor):
+def calc_oal_single_lambda(data, log_lambda, gamma_factor):
     """Calculate ATE with the outcome adaptive lasso"""
     train = data.train_data
     test = data.test_data
@@ -65,7 +65,7 @@ def calc_oal_single_lambda(data, _lambda, gamma_factor):
     A_train, Y_train, X_train = check_input(A_train, Y_train, X_train)
 
     n = A_train.shape[0]  # number of samples
-
+    _lambda = n ** log_lambda
     # extract gamma according to _lambda and gamma_factor
     gamma = 2 * (1 + gamma_factor - log(_lambda, n))
 
@@ -137,8 +137,8 @@ def calc_outcome_adaptive_lasso(data, gamma_factor=2,
 
     if log_lambdas is None:
         log_lambdas = [-10, -5, -2, -1, -0.75, -0.5, -0.25, 0.25, 0.49]
-    n = A.shape[0]
-    lambdas = n ** np.array(log_lambdas)
+    # n = A.shape[0]
+    lambdas = np.array(log_lambdas)
     amd_vec = np.zeros(lambdas.shape[0])
     ate_vec = np.zeros(lambdas.shape[0])
 
