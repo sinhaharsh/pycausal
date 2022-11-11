@@ -55,16 +55,16 @@ class SimulateDataset:
         pS = self.num_s  # number of spurious variables
 
         col_names = ['A', 'Y'] + make_names(pC, 'c') + make_names(pP, 'p') \
-            + make_names(pI, 'i') + make_names(pS, 's')
+                    + make_names(pI, 'i') + make_names(pS, 's')
         return col_names
 
     def load_scenario(self):
         """Utility function to load predefined scenarios"""
         c_indexes = list(range(self.num_c))
         p_indexes = list(range(self.num_c,
-                               self.num_c+self.num_p))
-        i_indexes = list(range(self.num_p+self.num_c,
-                               self.num_p+self.num_c+self.num_i))
+                               self.num_c + self.num_p))
+        i_indexes = list(range(self.num_p + self.num_c,
+                               self.num_p + self.num_c + self.num_i))
         nu = np.zeros(self.num_covariates)
         beta = np.zeros(self.num_covariates)
         beta[c_indexes] = self.coef_c[0]
@@ -83,9 +83,10 @@ class SimulateDataset:
                 cov_x = np.eye(self.num_covariates) + \
                         ~np.eye(self.num_covariates, dtype=bool) * self.rho
 
-            X = np.random.multivariate_normal(mean=0 * np.ones(self.num_covariates),
-                                              cov=cov_x,
-                                              size=self.num_samples)
+            X = np.random.multivariate_normal(
+                mean=0 * np.ones(self.num_covariates),
+                cov=cov_x,
+                size=self.num_samples)
             # Normalize covariates to have 0 mean unit std
             scaler = StandardScaler(copy=False)
             scaler.fit_transform(X)
@@ -93,14 +94,15 @@ class SimulateDataset:
             # Load beta and nu from the predefined scenarios
             beta, nu = self.load_scenario()
             A = np.random.binomial(np.ones(self.num_samples, dtype=int),
-                               expit(np.dot(X, nu)))
+                                   expit(np.dot(X, nu)))
 
             if np.all(A == A[0]):
-                warnings.warn("Regenerating treatment to ensure atleast one sample for both classes - 0 and 1.")
+                warnings.warn(
+                    "Regenerating treatment to ensure atleast one sample for both classes - 0 and 1.")
             else:
                 break
 
-        Y = np.random.randn(self.num_samples) + self.eta*A + np.dot(X, beta)
+        Y = np.random.randn(self.num_samples) + self.eta * A + np.dot(X, beta)
         col_names = self.generate_col_names()
         df = pd.DataFrame(np.hstack([A.reshape(-1, 1), Y.reshape(-1, 1), X]),
                           columns=col_names)

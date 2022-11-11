@@ -30,8 +30,11 @@ def calc_ate_ipw(A, Y, X,
     return effect[0]
 
 
-def calc_vanilla_beta(A, Y, X):
+def calc_vanilla_beta(data):
     # fit regression from covariates X and exposure A to outcome Y
+    X = data['X']
+    Y = data['Y']
+    A = data['A']
     XA = X.merge(A.to_frame(), left_index=True, right_index=True)
     lr = LinearRegression(fit_intercept=True).fit(XA, Y)
 
