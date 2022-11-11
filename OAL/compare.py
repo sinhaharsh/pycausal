@@ -36,15 +36,15 @@ def calc_ate_ipw(data, style='all',
         raise NotImplementedError
 
     ipw = IPW(LogisticRegression(solver=solver, penalty=penalty, C=C,
-                                 max_iter=max_iter), use_stabilized=True).fit(X,
-                                                                              A)
+                                 max_iter=max_iter),
+              use_stabilized=True).fit(X_train, A_train)
     # if not check_balance(A, Y, X, ipw, visualize=False):
     #     print(
     #         f"Num_features : {X.shape[1]}, No overlap, IPW cannot be estimated.")
     #     return np.NAN
-    weights = ipw.compute_weights(X, A,
+    weights = ipw.compute_weights(X_test, A_test,
                                   treatment_values=1)  # , clip_min=0.2, clip_max=0.8)
-    outcomes = ipw.estimate_population_outcome(X, A, Y, w=weights)
+    outcomes = ipw.estimate_population_outcome(X_test, A_test, Y_test, w=weights)
     effect = ipw.estimate_effect(outcomes[1], outcomes[0])
     return effect[0]
 
