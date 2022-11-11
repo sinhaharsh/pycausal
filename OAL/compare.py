@@ -103,15 +103,15 @@ def compare_methods(num_c, num_p, num_i,
     simulation.create_train_test()
 
     results = {
-        'regression': calc_vanilla_beta(A, Y, X_all),
-        'oal': calc_outcome_adaptive_lasso(A, Y, X_all),
-        'conf': calc_ate_ipw(A, Y, X_conf, penalty=penalty,
+        'regression': calc_vanilla_beta(simulation.test_data),
+        'oal': calc_outcome_adaptive_lasso(simulation),
+        'conf': calc_ate_ipw(simulation, style='conf', penalty=penalty,
                              solver=solver, C=C, max_iter=max_iter),
-        'target': calc_ate_ipw(A, Y, X_target, penalty=penalty,
+        'target': calc_ate_ipw(simulation, style='target', penalty=penalty,
                                solver=solver, C=C, max_iter=max_iter),
-        'pot_conf': calc_ate_ipw(A, Y, X_pot_conf, penalty=penalty,
+        'pot_conf': calc_ate_ipw(simulation, style='pot_conf', penalty=penalty,
                                  solver=solver, C=C, max_iter=max_iter),
-        'all': calc_ate_ipw(A, Y, X_all, penalty=penalty,
+        'all': calc_ate_ipw(simulation, style='all', penalty=penalty,
                             solver=solver, C=C, max_iter=max_iter)
     }
     return results
