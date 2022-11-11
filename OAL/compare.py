@@ -14,8 +14,27 @@ from OAL.outcome_adaptive_lasso import calc_outcome_adaptive_lasso
 OUT_DIR = './susan/'
 
 
-def calc_ate_ipw(A, Y, X,
+def calc_ate_ipw(data, style='all',
                  solver='liblinear', penalty='l1', C=1e-2, max_iter=500):
+    A_train = data.train_data['A']
+    Y_train = data.train_data['Y']
+    A_test = data.test_data['A']
+    Y_test = data.test_data['Y']
+    if style == 'conf':
+        X_train = data.train_data['X_conf']
+        X_test = data.test_data['X_conf']
+    elif style == 'target':
+        X_train = data.train_data['X_target']
+        X_test = data.test_data['X_target']
+    elif style == 'pot_conf':
+        X_train = data.train_data['X_pot_conf']
+        X_test = data.test_data['X_pot_conf']
+    elif style == 'all':
+        X_train = data.train_data['X_all']
+        X_test = data.test_data['X_all']
+    else:
+        raise NotImplementedError
+
     ipw = IPW(LogisticRegression(solver=solver, penalty=penalty, C=C,
                                  max_iter=max_iter), use_stabilized=True).fit(X,
                                                                               A)
