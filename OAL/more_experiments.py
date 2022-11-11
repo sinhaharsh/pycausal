@@ -1,5 +1,7 @@
-from compare import run_multiple_times
 import warnings
+
+from compare import run_multiple_times
+
 warnings.filterwarnings("ignore")
 
 num_samples = [200, 500, 1000, 2000]
@@ -8,7 +10,7 @@ eta_values = [-2, 0, 2]
 rho_values = [0, 0.2, 0.5]
 for eta in eta_values:
     for rho in rho_values:
-        for ns in num_samples :
+        for ns in num_samples:
             for nc in num_covariates:
                 params = {
                     'num_c': 2,
@@ -70,7 +72,7 @@ for eta in eta_values:
                 }
                 results_scenario3 = run_multiple_times(params, visualize=True)
 
-                params={
+                params = {
                     'num_c': 2,
                     'num_p': 2,
                     'num_i': 2,
