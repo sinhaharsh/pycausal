@@ -282,4 +282,24 @@ def subplot_box(data, folder, title, fig, ax):
 
 
 if __name__ == '__main__':
-    results = run_multiple_times(visualize=True)
+
+    # vary_eta(visualize=True)
+    params = {
+        'num_c': 2,
+        'num_p': 2,
+        'num_i': 2,
+        'num_covariates': 100,
+        'num_samples': 5000,
+        'coef_c': [0.6, 1],
+        'coef_p': 0.6,
+        'coef_i': 1,
+        'eta': 0,
+        'rho': 0.5,
+        'solver': 'liblinear',
+        'C': 1e-1,
+        'max_iter': 2000,
+        'penalty': 'l1',
+        'scenario': 1,
+        'plot': 'box'
+    }
+    results_scenario1 = run_multiple_times(params, visualize=True)
