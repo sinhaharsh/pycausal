@@ -32,7 +32,9 @@ class SimulateDataset:
         self.rho = rho
         self.num_covariates = num_covariates
         self.num_s = self.num_covariates - num_c - num_p - num_i
-
+        self.data = None
+        self.train_data = None
+        self.test_data = None
         if isinstance(coef_c, list):
             self.coef_c = coef_c
         else:
@@ -106,5 +108,5 @@ class SimulateDataset:
         col_names = self.generate_col_names()
         df = pd.DataFrame(np.hstack([A.reshape(-1, 1), Y.reshape(-1, 1), X]),
                           columns=col_names)
-        return df
+        self.data = df
 
