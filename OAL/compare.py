@@ -30,8 +30,8 @@ def calc_ate_ipw(data, style='all',
         X_train = data.train_data['X_pot_conf']
         X_test = data.test_data['X_pot_conf']
     elif style == 'all':
-        X_train = data.train_data['X_all']
-        X_test = data.test_data['X_all']
+        X_train = data.train_data['X']
+        X_test = data.test_data['X']
     else:
         raise NotImplementedError
 
