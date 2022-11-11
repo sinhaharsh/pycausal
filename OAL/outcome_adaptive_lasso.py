@@ -50,9 +50,21 @@ def calc_wamd(A, X, ipw, x_coefs, l_norm=1):
         np.abs(x_coefs))
 
 
-def calc_oal_single_lambda(A, Y, X, _lambda, gamma_factor):
+def calc_oal_single_lambda(data, _lambda, gamma_factor):
     """Calculate ATE with the outcome adaptive lasso"""
-    n = A.shape[0]  # number of samples
+    train = data.train_data
+    test = data.test_data
+    A_train = train['A']
+    Y_train = train['Y']
+    X_train = train['X']
+
+    A_test = test['A']
+    Y_test = test['Y']
+    X_test = test['X']
+
+    A_train, Y_train, X_train = check_input(A_train, Y_train, X_train)
+
+    n = A_train.shape[0]  # number of samples
 
     # extract gamma according to _lambda and gamma_factor
     gamma = 2 * (1 + gamma_factor - log(_lambda, n))
