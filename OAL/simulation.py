@@ -108,10 +108,10 @@ class SimulateDataset:
         self.data = df
 
     def create_train_test(self, test_size=0.3):
-        train, test = train_test_split(self.data,
-                                       test_size=test_size)
-        self.train_data = self.get_partition(train)
-        self.test_data = self.get_partition(test)
+        # train, test = train_test_split(self.data,
+                                       # test_size=test_size)
+        self.train_data = self.get_partition(self.data.copy())
+        self.test_data = self.get_partition(self.data.copy())
 
     @staticmethod
     def get_partition(data):

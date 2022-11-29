@@ -3,8 +3,8 @@ from math import log
 import numpy as np
 import pandas as pd
 from causallib.estimation import IPW
-from sklearn.linear_model import LogisticRegression, LinearRegression
-
+from sklearn.linear_model import LinearRegression
+from models import LogisticRegression
 
 def check_input(A, Y, X):
     if not isinstance(A, pd.Series):
@@ -25,8 +25,10 @@ def check_input(A, Y, X):
 
 
 def calc_ate_vanilla_ipw(A, Y, X):
-    ipw = IPW(LogisticRegression(solver='liblinear', penalty='l1', C=1e2,
-                                 max_iter=500), use_stabilized=True).fit(X, A)
+    # ipw = IPW(LogisticRegression(solver='liblinear', penalty='l1', C=1e2,
+    #                              max_iter=500), use_stabilized=True).fit(X, A)
+    ipw = IPW(LogisticRegression(C=1e2,max_iter=500)).fit(X, A)
+
     weights = ipw.compute_weights(X, A)
     outcomes = ipw.estimate_population_outcome(X, A, Y, w=weights)
     effect = ipw.estimate_effect(outcomes[1], outcomes[0])
@@ -91,8 +93,10 @@ def calc_oal_single_lambda(data, log_lambda, gamma_factor):
         LogisticRegression(solver='liblinear',
                            penalty='l1',
                            C=1 / _lambda,
-                           max_iter=400),
-        use_stabilized=False).fit(X_w, A_train)
+                           max_iter=500),
+        use_stabilized=False,
+    clip_min=1e-7,
+    clip_max=1-1e-7).fit(X_w, A_train)
     # compute inverse propensity weighting and calculate ATE
     weights_train = ipw.compute_weights(X_train, A_train)
     weights_test = ipw.compute_weights(X_test, A_test)

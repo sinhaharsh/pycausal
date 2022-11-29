@@ -11,8 +11,8 @@ from OAL.simulation import SimulateDataset
 from OAL.utils import check_overlap
 from OAL.utils import timestamp, save_dict2json
 from OAL.outcome_adaptive_lasso import calc_outcome_adaptive_lasso
-OUT_DIR = './susan/'
-
+OUT_DIR = './susan_ipw_train/'
+eps = 1e-7
 
 def calc_ate_ipw(data, style='all',
                  solver='liblinear', penalty='l1', C=1e-2, max_iter=500):
@@ -37,13 +37,14 @@ def calc_ate_ipw(data, style='all',
 
     ipw = IPW(LogisticRegression(solver=solver, penalty=penalty, C=C,
                                  max_iter=max_iter),
-              use_stabilized=True).fit(X_train, A_train)
+              use_stabilized=False,
+              clip_min=eps,
+              clip_max=1-eps).fit(X_train, A_train)
     # if not check_balance(A, Y, X, ipw, visualize=False):
     #     print(
     #         f"Num_features : {X.shape[1]}, No overlap, IPW cannot be estimated.")
     #     return np.NAN
-    weights = ipw.compute_weights(X_test, A_test,
-                                  treatment_values=1)  # , clip_min=0.2, clip_max=0.8)
+    weights = ipw.compute_weights(X_test, A_test)  # , clip_min=0.2, clip_max=0.8)
     outcomes = ipw.estimate_population_outcome(X_test, A_test, Y_test, w=weights)
     effect = ipw.estimate_effect(outcomes[1], outcomes[0])
     return effect[0]
@@ -103,7 +104,7 @@ def compare_methods(num_c, num_p, num_i,
     simulation.create_train_test()
 
     results = {
-        'regression': calc_vanilla_beta(simulation.test_data),
+        # 'regression': calc_vanilla_beta(simulation.test_data),
         'oal': calc_outcome_adaptive_lasso(simulation),
         'conf': calc_ate_ipw(simulation, style='conf', penalty=penalty,
                              solver=solver, C=C, max_iter=max_iter),
@@ -120,7 +121,7 @@ def compare_methods(num_c, num_p, num_i,
 def run_multiple_times(params, visualize=False):
     ate = list()
     fig, ax = plt.subplots(1, 1, figsize=(8, 8))
-    title = 'Eta:{},Samples:{},Covariates:{},Scenario:{},Rho:{}'.format(
+    title = 'Eta:{},Samples:{},Covariates:{},Scenario:{},Rho:{:.1f}'.format(
         params['eta'],
         params['num_samples'],
         params['num_covariates'],
@@ -128,7 +129,14 @@ def run_multiple_times(params, visualize=False):
         params['rho']
     )
 
-    filename = title.replace(':', '_').replace(',', '+')+'_'+timestamp()
+    filename = 'Eta:{},Samples:{:05d},Covariates:{:05d},Scenario:{},Rho:{:.1f}'.format(
+        params['eta'],
+        params['num_samples'],
+        params['num_covariates'],
+        params['scenario'],
+        params['rho']
+    ).replace(':', '_').replace(',', '+')+'_'+timestamp()
+
     for i in range(50):
         estimates = compare_methods(**params)
         ate.extend(estimates.items())
@@ -137,7 +145,7 @@ def run_multiple_times(params, visualize=False):
         if params['plot'] == 'violin':
             subplot_violin(ate_df, OUT_DIR, title, fig, ax)
         if params['plot'] == 'box':
-            subplot_box(ate_df, OUT_DIR, title, fig, ax)
+            subplot_box(ate_df, OUT_DIR, title, fig, ax, params['eta'])
     save_dict2json(OUT_DIR, filename, params)
     plt.tight_layout()
 
@@ -254,11 +262,12 @@ def subplot_violin(data, folder, title, fig, ax):
                 bbox=dict(facecolor='#445A64'))
 
 
-def subplot_box(data, folder, title, fig, ax):
+def subplot_box(data, folder, title, fig, ax, true_ate):
     sns.boxplot(x='Method', y='Estimate', data=data,
                ax=ax, palette=sns.color_palette("Set1"))
     ax.grid()
     ax.set_title(title)
+    ax.axhline(y=true_ate, color='r', linestyle='-')
     try:
         lines = ax.get_lines()
         categories = range(len(lines) // 6)
@@ -289,7 +298,7 @@ if __name__ == '__main__':
         'num_p': 2,
         'num_i': 2,
         'num_covariates': 100,
-        'num_samples': 5000,
+        'num_samples': 500,
         'coef_c': [0.6, 1],
         'coef_p': 0.6,
         'coef_i': 1,
